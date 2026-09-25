@@ -259,8 +259,10 @@ body {
   z-index: 20;
   display: flex;
   flex-direction: column;
-  max-height: 250px;
+  max-height: 150px;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
   overflow: hidden;
   background: #fff;
   border: 1px solid #e2e8f0;
@@ -275,10 +277,10 @@ body {
 .search-suggestion-item {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 5px;
   width: 100%;
-  min-height: 36px;
-  padding: 4px 8px;
+  min-height: 28px;
+  padding: 3px 6px;
   border: 0;
   border-bottom: 1px solid #f1f5f9;
   background: #fff;
@@ -299,19 +301,28 @@ body {
 }
 
 .search-suggestion-item img {
-  width: 24px;
-  height: 24px;
-  flex: 0 0 24px;
-  border-radius: 4px;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  border-radius: 3px;
   object-fit: cover;
 }
 
 .search-suggestion-name {
   overflow: hidden;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 400;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.search-suggestions::-webkit-scrollbar {
+  width: 5px;
+}
+
+.search-suggestions::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 5px;
 }
 
 .hero-search-box input {
