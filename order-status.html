@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>สถานะคำสั่งซื้อ - Swap&go</title>
+  <!-- Google Fonts: Kanit -->
+    <link rel="icon" type="image/png" href="logo.png">
+  <link href="https://fonts.googleapis.com/css?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+ 
+  <style>
+    * {
+        box-sizing: border-box;
+        font-family: 'Kanit', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background-color: #f8f9fa;
+        color: #333;
+    }
+
+    /* --- Navbar Styles --- */
+    .navbar {
+        background: #fff;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .logo span {
+        color: #004d34;
+        font-size: 1.2rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 20px;
+        list-style: none;
+    }
+
+    .nav-links a {
+        text-decoration: none;
+        color: #475569;
+        font-size: 0.95rem;
+    }
+
+    .nav-links a:hover {
+        color: #004d34;
+        font-weight: 500;
+    }
+
+    .nav-search {
+        background: #f1f5f9;
+        padding: 6px 15px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 250px;
+    }
+
+    .nav-search input {
+        border: none;
+        background: transparent;
+        outline: none;
+        width: 100%;
+        font-size: 0.9rem;
+    }
+
+    .nav-right-icons {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        font-size: 1.2rem;
+    }
+
+    .nav-right-icons a,
+    .nav-right-icons i {
+        color: #333;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* --- Navbar Profile Icon & Image Style --- */
+    .nav-profile-link {
+        color: inherit;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+    }
+
+    .nav-profile-circle {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: #ddd;
+        border: 1px solid #ccc;
+    }
+
+    .nav-profile-circle img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* --- Sidebar Styles --- */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 998;
+    }
+
+    .sidebar-overlay.active {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 260px;
+        height: 100%;
+        background: #fff;
+        box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+        padding: 20px 0;
+        transition: left 0.3s ease;
+        z-index: 999;
+        overflow-y: auto;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .sidebar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px 15px 20px;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 15px;
+    }
+
+    .sidebar-header h3 {
+        font-size: 1.1rem;
+        color: #004d34;
+        margin: 0;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        color: #666;
+        cursor: pointer;
+    }
+
+    .sidebar-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar-menu li a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 20px;
+        color: #555;
+        text-decoration: none;
+        font-size: 0.92rem;
+        transition: 0.2s;
+    }
+
+    .sidebar-menu li.active a,
+    .sidebar-menu li a:hover {
+        background: #e6f4ea;
+        color: #004d34;
+        font-weight: 500;
+        border-left: 4px solid #004d34;
+    }
+
+    .sidebar-divider {
+        margin: 15px 20px;
+        border: none;
+        border-top: 1px solid #eee;
+    }
+
+    .status-container {
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    .status-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .status-title h2 {
+        margin: 0 0 5px 0;
+        color: #222;
+        font-size: 1.3rem;
+    }
+
+    .status-title p {
+        margin: 0;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .btn-cancel-order {
+        background: #fff;
+        border: 1px solid #dc3545;
+        color: #dc3545;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: 'Kanit';
+        transition: 0.2s;
+    }
+
+    .btn-cancel-order:hover {
+        background: #fff5f5;
+    }
+
+    .status-grid-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .status-card {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #eee;
+        margin-bottom: 20px;
+    }
+
+    .timeline-item {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .timeline-item.completed .timeline-icon {
+        background: #0b5c3b;
+    }
+
+    .timeline-item:not(.completed) {
+        opacity: 0.5;
+    }
+
+    .timeline-icon {
+        width: 30px;
+        height: 30px;
+        background: #ccc;
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+    }
+
+    .timeline-content h4 {
+        margin: 0 0 3px 0;
+        font-size: 15px;
+    }
+
+    .timeline-content p {
+        margin: 0;
+        color: #666;
+        font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- พื้นหลังมืดตอนเปิด Sidebar -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- แถบ Sidebar ด้านซ้าย -->
+  <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+          <h3>เมนูจัดการ</h3>
+          <button class="close-btn" id="close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <ul class="sidebar-menu">
+          <li class="active"><a href="index.html"><i class="fa-solid fa-house"></i> หน้าแรก</a></li>
+            <li><a href="catalog.html"><i class="fa-solid fa-border-all"></i> สินค้าทั้งหมด</a></li>
+            <li><a href="profile.html"><i class="fa-solid fa-user"></i> โปรไฟล์ของฉัน</a></li>
+            <li><a href="my-products.html"><i class="fa-solid fa-box"></i> สินค้าของฉัน</a></li>
+            <li><a href="my-reviews.html"><i class="fa-solid fa-line"></i> แก้ไข้สินค้า</a></li>
+            <li><a href="account-settings.html"><i class="fa-solid fa-gear"></i> ตั้งค่าบัญชี</a></li>
+        </ul>
+      </ul>
+      <hr class="sidebar-divider">
+      <ul class="sidebar-menu">
+          <li><a href="index-regis.html" style="color: #dc3545;"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</a></li>
+      </ul>
+  </aside>
+
+  <header class="navbar">
+   <div class="logo">
+            <a href="index.html"></a>
+            <img src="logo.png"> Swap&go
+        </div>
+    <ul class="nav-links">
+      <li><a href="index.html">หน้าแรก</a></li>
+      <li><a href="catalog.html">สินค้าทั้งหมด</a></li>
+
+    </ul>
+
+    <div class="nav-search">
+      <i class="fa-solid fa-magnifying-glass" style="color: #64748b;"></i>
+      <input type="text" placeholder="ค้นหา...">
+    </div>
+
+    <div class="nav-right-icons">
+      <a href="profile.html"><i class="fa-solid fa-user"></i></a>
+      
+      <!-- ไอคอนโปรไฟล์บน Navbar (ซิงค์อัตโนมัติ) -->
+      <a href="account-settings.html" class="nav-profile-link">
+          <div class="nav-profile-circle" id="nav-profile-container">
+              <i class="fa-solid fa-user" id="nav-user-icon" style="font-size: 1rem; color: #555;"></i>
+          </div>
+      </a>
+
+      <!-- ปุ่มเปิด Sidebar -->
+      <i class="fa-solid fa-bars" id="menu-toggle" title="เปิด/ปิดเมนู"></i>
+    </div>
+  </header>
+
+  <!-- เนื้อหาหลัก -->
+  <main class="status-container">
+    <div class="status-header-row">
+      <div class="status-title">
+        <h2 id="display-order-id">คำสั่งซื้อ #RT123456789</h2>
+        <p id="order-date-time">สั่งซื้อวันที่ -</p>
+      </div>
+      <button class="btn-cancel-order" id="cancel-order-btn">ยกเลิกคำสั่งซื้อ</button>
+    </div>
+
+    <div class="status-grid-layout">
+      <div>
+        <div class="status-card">
+          <div class="timeline-item completed">
+            <div class="timeline-icon"><i class="fa-solid fa-check"></i></div>
+            <div class="timeline-content">
+              <h4>ส่งคำสั่งซื้อแล้ว</h4>
+              <p id="time-step-1">บันทึกข้อมูลเรียบร้อย</p>
+            </div>
+          </div>
+          <div class="timeline-item completed">
+            <div class="timeline-icon"><i class="fa-solid fa-check"></i></div>
+            <div class="timeline-content">
+              <h4>นัดหมายเรียบร้อย</h4>
+              <p>จุดนัดรับ: <span id="timeline-pickup">โรงอาหารกลาง</span></p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-icon"><i class="fa-solid fa-check"></i></div>
+            <div class="timeline-content">
+              <h4>รอรับสินค้า</h4>
+              <p>รอดำเนินการ</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-icon"><i class="fa-solid fa-check"></i></div>
+            <div class="timeline-content">
+              <h4>รับสินค้าแล้ว</h4>
+              <p>รอดำเนินการ</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-icon"><i class="fa-solid fa-check"></i></div>
+            <div class="timeline-content">
+              <h4>เสร็จสิ้น</h4>
+              <p>รอดำเนินการ</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="status-card" id="status-items-container">
+          <h3 class="section-title" style="margin-top: 0; font-size: 1.1rem; color: #333;">ข้อมูลคำสั่งซื้อ</h3>
+        </div>
+      </div>
+
+      <div>
+        <div class="status-card">
+          <h3 class="section-title" style="margin-top: 0; font-size: 1.1rem; color: #333; margin-bottom: 12px;">ข้อมูลผู้ขาย</h3>
+          <div class="seller-profile-box" style="display: flex; gap: 15px; align-items: center;">
+            <i class="fa-solid fa-circle-user seller-avatar" style="font-size: 40px; color: #ccc;"></i>
+            <div class="seller-info" style="flex: 1;">
+              <h4 style="margin: 0 0 10px 0;">นทรา มณีแสง</h4>
+              <div>
+                <div style="display: flex; gap: 10px;">
+                  <button id="btnProfile" onclick="selectButton('profile')" style="padding: 6px 16px; border: 1px solid #0b5c3b; color: #0b5c3b; background: #fff; border-radius: 20px; font-family: 'Kanit'; cursor: pointer; font-size: 14px; transition: all 0.2s;">ดูโปรไฟล์ร้านค้า</button>
+                  <button id="btnContact" onclick="selectButton('contact')" style="padding: 6px 16px; background: #0b5c3b; color: #fff; border: none; border-radius: 20px; font-family: 'Kanit'; cursor: pointer; font-size: 14px; transition: all 0.2s;">ช่องทางการติดต่อ</button>
+                </div>
+                <div id="sellerContactBox" style="display: none; margin-top: 15px; padding: 12px 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6; font-size: 14px;">
+                  <div style="font-weight: 600; color: #0b5c3b; margin-bottom: 8px;"><i class="fa-solid fa-id-card"></i> ช่องทางการติดต่อผู้ขาย</div>
+                  <div style="margin-bottom: 4px;">📞 เบอร์โทรศัพท์: 089-123-4567</div>
+                  <div style="margin-bottom: 4px;">💬 Line ID: notra_shop</div>
+                  <div>📸 IG: notra_official</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="status-card">
+          <h3 class="section-title" style="margin-top: 0; font-size: 1.1rem; color: #333; margin-bottom: 12px;">ข้อมูลการนัดรับ</h3>
+          <div class="info-row" style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; color: #555;">
+            <i class="fa-solid fa-location-dot" style="color: #0b5c3b;"></i>
+            <span>จุดนัดรับ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong id="info-pickup">โรงอาหารกลาง</strong></span>
+          </div>
+          <div class="info-row" style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; color: #555;">
+            <i class="fa-regular fa-calendar" style="color: #0b5c3b;"></i>
+            <span>วันที่ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong id="info-date">12 สค. 2569</strong></span>
+          </div>
+          <div class="info-row" style="display: flex; align-items: center; gap: 12px; color: #555;">
+            <i class="fa-regular fa-clock" style="color: #0b5c3b;"></i>
+            <span>เวลา &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong id="info-time">13.00-14.00 น.</strong></span>
+          </div>
+        </div>
+
+        <div class="status-card">
+          <h3 class="section-title" style="margin-top: 0; font-size: 1.1rem; color: #333; margin-bottom: 12px;">วิธีการชำระเงิน</h3>
+          <div class="payment-method-row" style="display: flex; align-items: center; gap: 12px; color: #555;">
+            <i class="fa-solid fa-hand-holding-dollar" style="color: #0b5c3b; font-size: 20px;"></i>
+            <span id="info-payment">ชำระสินค้าเมื่อได้รับสินค้า</span>
+          </div>
+        </div>
+
+        <div class="status-card">
+          <h3 class="section-title" style="margin-top: 0; font-size: 1.1rem; color: #333; margin-bottom: 12px;">หมายเหตุจากผู้ขาย</h3>
+          <div class="note-box" id="info-note" style="color: #666; font-size: 14px;">ไม่มีหมายเหตุเพิ่มเติมจากผู้ขาย</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+   <div class="footer-contact-container">
+        <div class="footer-contact-left">
+          <div class="logo">
+            <a href="index.html"></a>
+            <img src="logo.png"> Swap&go
+        </div>
+            <h3 class="footer-contact-title">ติดต่อเรา</h3>
+            <p class="footer-contact-desc">มีข้อสงสัย หรือต้องการสอบถามข้อมูลเพิ่มเติม สามารถติดต่อเราได้ผ่านช่องทางด้านล่างนี้</p>
+            
+            <ul class="footer-contact-info">
+                <li><i class="fa-solid fa-envelope"></i> contact.swapandgo@gmail.com</li>
+                <li><i class="fa-solid fa-location-dot"></i> มหาวิทยาลัยเทคโนโลยีราชมงคลตะวันออก วิทยาเขตบางพระ</li>
+            </ul>
+
+           <div class="footer-social-icons">
+                    <a href="https://line.me/ti/p/edEMCFLm-k" class="footer-social-icon social-line"><i class="fa-brands fa-line"></i></a>
+                    <a href="https://www.instagram.com/yoxurth?stkn=MTA5b3k5a3kzOGQ1NA==" class="footer-social-icon social-ig"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/share/1MLeNK6Gc1/?mibextid=wwXIfr" class="footer-social-icon social-fb"><i class="fa-brands fa-facebook-f"></i></a>
+                </div>
+        </div>
+        <div class="footer-contact-right">
+            <img src="river.jpg" alt="RMUTTO Building">
+        </div>
+   </div>
+   <div class="footer-bottom-bar">
+      <p>&copy; 2026 Swap&go. All rights reserved. RMUTTO Student Marketplace.</p>
+   </div>
+  </footer>
+
+ 
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      
+      const savedData = JSON.parse(localStorage.getItem('userAccountSettings')) || {};
+      const navProfileContainer = document.getElementById('nav-profile-container');
+
+      if (navProfileContainer) {
+          if (savedData.avatarImage) {
+              navProfileContainer.innerHTML = `<img src="${savedData.avatarImage}" alt="Profile">`;
+          } else {
+              navProfileContainer.innerHTML = `<i class="fa-solid fa-user" id="nav-user-icon" style="font-size: 1rem; color: #555;"></i>`;
+          }
+      }
+
+      const savedItems = JSON.parse(localStorage.getItem('checkoutItems')) || [];
+      const container = document.getElementById('status-items-container');
+
+      if (container && savedItems.length > 0) {
+        let htmlContent = '<h3 class="section-title" style="margin-top: 0; font-size: 1.1rem; color: #333; margin-bottom: 15px;">ข้อมูลคำสั่งซื้อ</h3>';
+        
+        savedItems.forEach(item => {
+          htmlContent += `
+            <div class="order-item-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #f1f1f1;">
+              <div class="order-item-left" style="display: flex; align-items: center; gap: 12px;">
+                <div class="order-item-img" style="width: 50px; height: 50px; border-radius: 6px; overflow: hidden; background: #eee;">
+                  <img src="${item.image || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=300'}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <span class="order-item-name" style="font-size: 14px; color: #333; font-weight: 500;">${item.name}</span>
+              </div>
+              <div class="order-item-right" style="text-align: right;">
+                <div class="price" style="color: #0b5c3b; font-weight: 600;">฿${item.price.toLocaleString()}</div>
+                <div style="font-size: 13px; color: #777;">x${item.quantity}</div>
+              </div>
+            </div>
+          `;
+        });
+        container.innerHTML = htmlContent;
+      }
+
+      // 3. ดึงข้อมูลการนัดรับจริงจาก localStorage (latestOrder)
+      const latestOrder = JSON.parse(localStorage.getItem('latestOrder'));
+      if (latestOrder) {
+        const infoPickup = document.getElementById('info-pickup');
+        const infoDate = document.getElementById('info-date');
+        const infoTime = document.getElementById('info-time');
+        const timelinePickup = document.getElementById('timeline-pickup');
+
+        if (infoPickup) infoPickup.textContent = latestOrder.location || 'โรงอาหารกลาง';
+        if (timelinePickup) timelinePickup.textContent = latestOrder.location || 'โรงอาหารกลาง';
+        if (infoTime) infoTime.textContent = latestOrder.time || '13.00-14.00 น.';
+
+        if (infoDate && latestOrder.date) {
+          const dateObj = new Date(latestOrder.date);
+          const options = { day: 'numeric', month: 'short', year: 'numeric' };
+          infoDate.textContent = dateObj.toLocaleDateString('th-TH', options);
+        }
+      }
+
+      const now = new Date();
+      const options = { day: 'numeric', month: 'short', year: 'numeric' };
+      const thaiDate = now.toLocaleDateString('th-TH', options);
+      const timeString = now.getHours().toString().padStart(2, '0') + '.' + now.getMinutes().toString().padStart(2, '0') + ' น.';
+      
+      const orderDateEl = document.getElementById('order-date-time');
+      if (orderDateEl) {
+        orderDateEl.textContent = `สั่งซื้อวันที่ ${thaiDate} เวลา ${timeString}`;
+      }
+
+      const timeStep1 = document.getElementById('time-step-1');
+      if (timeStep1) {
+        timeStep1.textContent = `${thaiDate} | ${timeString}`;
+      }
+
+      const cancelBtn = document.getElementById('cancel-order-btn');
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+          if (confirm('คุณต้องการยกเลิกคำสั่งซื้อนี้ใช่หรือไม่?')) {
+            alert('ยกเลิกคำสั่งซื้อเรียบร้อยแล้ว');
+            localStorage.removeItem('checkoutItems');
+            window.location.href = 'index.html';
+          }
+        });
+      }
+    });
+
+    // 4. ควบคุมการเปิด/ปิด Sidebar
+    const menuToggle = document.getElementById('menu-toggle');
+    const closeBtn = document.getElementById('close-btn');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+    if (menuToggle && sidebar && sidebarOverlay && closeBtn) {
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+        });
+
+        closeBtn.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        }
+    }
+
+    // 5. สลับปุ่มข้อมูลผู้ขาย
+    function selectButton(type) {
+        const btnProfile = document.getElementById('btnProfile');
+        const btnContact = document.getElementById('btnContact');
+        const box = document.getElementById('sellerContactBox');
+
+        if (type === 'contact') {
+            btnContact.style.background = '#0b5c3b';
+            btnContact.style.color = '#fff';
+            btnContact.style.border = 'none';
+
+            btnProfile.style.background = '#fff';
+            btnProfile.style.color = '#0b5c3b';
+            btnProfile.style.border = '1px solid #0b5c3b';
+
+            box.style.display = 'block';
+        } else {
+            btnProfile.style.background = '#0b5c3b';
+            btnProfile.style.color = '#fff';
+            btnProfile.style.border = 'none';
+
+            btnContact.style.background = '#fff';
+            btnContact.style.color = '#0b5c3b';
+            btnContact.style.border = '1px solid #0b5c3b';
+
+            box.style.display = 'none';
+        }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ลงขายสินค้า - Swap&go</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+ 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f8;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #fff;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #eee;
+        }
+
+        .navbar .logo {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #004d34;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .navbar .logo img {
+            width: 35px;
+            height: 35px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            color: #004d34;
+            font-weight: 500;
+        }
+
+        .nav-search {
+            position: relative;
+            background: #eef2f3;
+            border-radius: 20px;
+            padding: 5px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 250px;
+        }
+
+        .nav-search input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .nav-right-icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+
+        .nav-right-icons a,
+        .nav-right-icons i {
+            color: #333;
+            text-decoration: none;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .nav-profile-link {
+            color: inherit;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-profile-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #ddd;
+            border: 1px solid #ccc;
+        }
+
+        .nav-profile-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 998;
+        }
+
+        .sidebar-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 260px;
+            height: 100%;
+            background: #fff;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            padding: 20px 0;
+            transition: left 0.3s ease;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px 15px 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.1rem;
+            color: #004d34;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #555;
+            text-decoration: none;
+            font-size: 0.92rem;
+            transition: 0.2s;
+        }
+
+        .sidebar-menu li.active a,
+        .sidebar-menu li a:hover {
+            background: #e6f4ea;
+            color: #004d34;
+            font-weight: 500;
+            border-left: 4px solid #004d34;
+        }
+
+        .sidebar-divider {
+            margin: 15px 20px;
+            border: none;
+            border-top: 1px solid #eee;
+        }
+
+        .main-container {
+            max-width: 750px;
+            margin: 35px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 35px 40px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .form-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 5px;
+        }
+
+        .form-subtitle {
+            font-size: 0.88rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .upload-box {
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            background: #f8fafc;
+            height: 160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-bottom: 25px;
+            transition: 0.2s;
+        }
+
+        .upload-box:hover {
+            border-color: #004d34;
+            background: #f1f5f9;
+        }
+
+        .upload-box i {
+            font-size: 1.8rem;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .upload-box span {
+            font-size: 0.92rem;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.92rem;
+            font-weight: 500;
+            color: #222;
+            margin-bottom: 8px;
+        }
+
+        .form-input, 
+        .form-select, 
+        .form-textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            outline: none;
+            transition: 0.2s;
+            background: #fff;
+        }
+
+        .form-input:focus, 
+        .form-select:focus, 
+        .form-textarea:focus {
+            border-color: #004d34;
+            box-shadow: 0 0 0 3px rgba(0, 77, 52, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            height: 110px;
+        }
+
+        .condition-options {
+            display: flex;
+            gap: 30px;
+            margin-top: 5px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #475569;
+            cursor: pointer;
+        }
+
+        .checkbox-label input {
+            width: 16px;
+            height: 16px;
+            accent-color: #004d34;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: #004d34;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background: #003825;
+        }
+
+        .btn-submit:disabled {
+            background: #94a3b8;
+            cursor: wait;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>เมนูจัดการ</h3>
+            <button class="close-btn" id="close-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="index.html"><i class="fa-solid fa-house"></i> หน้าแรก</a></li>
+            <li><a href="catalog.html"><i class="fa-solid fa-border-all"></i> สินค้าทั้งหมด</a></li>
+            <li><a href="profile.html"><i class="fa-solid fa-user"></i> โปรไฟล์ของฉัน</a></li>
+            <li><a href="my-products.html"><i class="fa-solid fa-box"></i> สินค้าของฉัน</a></li>
+            <li><a href="fix.html"><i class="fa-solid fa-pen-to-square"></i> แก้ไขสินค้า</a></li>
+            <li><a href="account-settings.html"><i class="fa-solid fa-gear"></i> ตั้งค่าบัญชี</a></li>
+        </ul>
+        <hr class="sidebar-divider">
+        <ul class="sidebar-menu">
+            <li><a href="index-regis.html" style="color: #dc3545;"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</a></li>
+        </ul>
+    </aside>
+
+    <header class="navbar">
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="Logo"> Swap&go
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html">หน้าแรก</a></li>
+            <li><a href="catalog.html">สินค้าทั้งหมด</a></li>
+        </ul>
+        <div class="nav-search">
+            <i class="fa-solid fa-magnifying-glass" style="color: #888; font-size: 0.85rem;"></i>
+            <input type="text" placeholder="ค้นหา...">
+        </div>
+        <div class="nav-right-icons">
+            <a href="account-settings.html" class="nav-profile-link">
+                <div class="nav-profile-circle" id="nav-profile-container">
+                    <i class="fa-solid fa-user" id="nav-user-icon" style="font-size: 1rem; color: #555;"></i>
+                </div>
+            </a>
+            <i class="fa-solid fa-bars" id="menu-toggle" title="เปิด/ปิดเมนู" style="cursor: pointer;"></i>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <h1 class="form-title">ลงขายสินค้า</h1>
+        <p class="form-subtitle">อัปโหลดรูปภาพ (สูงสุด 5 รูป)</p>
+
+        <div class="upload-box" id="upload-box">
+            <i class="fa-solid fa-plus"></i>
+            <span>เพิ่มรูปภาพ (สูงสุด 5 รูป)</span>
+            <input type="file" id="file-input" name="product-images[]" form="add-product-form" style="display: none;" accept="image/*" multiple>
+        </div>
+
+        <div id="image-preview-container" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;"></div>
+
+        <form id="add-product-form" action="inset.php" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label class="form-label">ชื่อสินค้า</label>
+                <input type="text" id="product-name" name="product-name" class="form-input" placeholder="เช่น หนังสือชีววิทยา" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">หมวดหมู่</label>
+                    <select id="product-category" name="product-category" class="form-select" required>
+                        <option value="" disabled selected>เลือกหมวดหมู่</option>
+                        <option value="book">หนังสือ</option>
+                        <option value="equipment">อุปกรณ์การเรียน</option>
+                        <option value="electronics">ไอที / อิเล็กทรอนิกส์</option>
+                        <option value="other">อื่นๆ</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ราคา</label>
+                    <input type="number" id="product-price" name="product-price" class="form-input" placeholder="ระบุราคา" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">รายละเอียดสินค้า</label>
+                <textarea id="product-desc" name="product-desc" class="form-textarea" placeholder="ระบุรายละเอียดสินค้า.." required></textarea>
+            </div>
+            <div class="form-group">
+                ที่อยู่ของผู้ขาย
+                <label class="checkbox-label">
+                <input type="radio" name="seller-address" value="บางพระ" class="seller-address" checked required> บางพระ
+                </label>
+            </div>
+            <div class="form-group">
+                สภาพของสินค้า
+                <label class="checkbox-label">
+                    <input type="checkbox" name="productCondition" value="มือสอง-สภาพดี" class="condition-checkbox"> มือสอง-สภาพดี
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" name="productCondition" value="มือสอง-มีร่องรอย" class="condition-checkbox"> มือสอง-มีร่องรอย
+                </label>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+                <label class="form-label">ช่องทางการติดต่อผู้ขาย</label>
+                <textarea id="product-contact" name="product-contact" class="form-textarea" required>เบอร์โทรศัพท์:
+ID Line:
+Instagram:
+Facebook:</textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">ลงประกาศ</button>
+        </form>
+    </main>
+
+    <footer class="site-footer" style="margin-top: 50px;">
+        <div class="footer-contact-container">
+            <div class="footer-contact-left">
+                <div class="logo" style="margin-bottom: 12px;">
+                    <img src="logo.png"> Swap&go
+                </div>
+                <h3 class="footer-contact-title">ติดต่อเรา</h3>
+                <p class="footer-contact-desc">มีข้อสงสัย หรือต้องการสอบถามข้อมูลเพิ่มเติม สามารถติดต่อเราได้ผ่านช่องทางด้านล่างนี้</p>
+                
+                <ul class="footer-contact-info">
+                    <div class="footer-social-icons">
+                    <a href="#" class="footer-social-icon social-line"><i class="fa-brands fa-line"></i></a>
+                    <a href="#" class="footer-social-icon social-ig"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="footer-social-icon social-fb"><i class="fa-brands fa-facebook-f"></i></a>
+                </div>
+                    <li><i class="fa-solid fa-envelope"></i> contact.swapandgo@gmail.com</li>
+                    <li><i class="fa-solid fa-location-dot"></i> มหาวิทยาลัยเทคโนโลยีราชมงคลตะวันออก วิทยาเขตบางพระ</li>
+                </ul>
+            </div>
+            <div class="footer-contact-right">
+                <img src="river.jpg" alt="RMUTTO Building">
+            </div>
+        </div>
+        <div class="footer-bottom-bar">
+            <p>&copy; 2026 Swap&go. All rights reserved. RMUTTO Student Marketplace.</p>
+        </div>
+    </footer>
+    <script>
+        const uploadBox = document.getElementById('upload-box');
+        const fileInput = document.getElementById('file-input');
+        const previewContainer = document.getElementById('image-preview-container');
+        const maxImages = 5;
+        let selectedFiles = [];
+
+        uploadBox.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', () => {
+            const newFiles = Array.from(fileInput.files).filter(file => file.type.startsWith('image/'));
+            selectedFiles = [...selectedFiles, ...newFiles].slice(0, maxImages);
+            updateFileInput();
+            renderPreviews();
+        });
+
+        function updateFileInput() {
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => dataTransfer.items.add(file));
+            fileInput.files = dataTransfer.files;
+        }
+
+        function renderPreviews() {
+            previewContainer.replaceChildren();
+
+            selectedFiles.forEach((file, index) => {
+                const preview = document.createElement('div');
+                preview.style.cssText = 'position: relative; width: 110px; height: 110px;';
+
+                const image = document.createElement('img');
+                image.src = URL.createObjectURL(file);
+                image.alt = `รูปภาพสินค้า ${index + 1}`;
+                image.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 8px;';
+
+                const removeButton = document.createElement('button');
+                removeButton.type = 'button';
+                removeButton.textContent = '×';
+                removeButton.setAttribute('aria-label', `ลบรูปภาพที่ ${index + 1}`);
+                removeButton.style.cssText = 'position: absolute; top: 3px; right: 3px; width: 24px; height: 24px; border: 0; border-radius: 50%; background: #b42318; color: white; cursor: pointer;';
+                removeButton.addEventListener('click', () => {
+                    selectedFiles.splice(index, 1);
+                    updateFileInput();
+                    renderPreviews();
+                });
+
+                preview.append(image, removeButton);
+                previewContainer.appendChild(preview);
+            });
+        }
+
+        function fileToDataUrl(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        const addProductForm = document.getElementById('add-product-form');
+        const submitButton = addProductForm.querySelector('.btn-submit');
+
+        addProductForm.addEventListener('submit', async event => {
+            event.preventDefault();
+            submitButton.disabled = true;
+            submitButton.textContent = 'กำลังลงประกาศ...';
+
+            try {
+                const images = selectedFiles.length > 0
+                    ? await Promise.all(selectedFiles.map(fileToDataUrl))
+                    : ['https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=600'];
+                const conditions = Array.from(document.querySelectorAll('input[name="productCondition"]:checked'))
+                    .map(input => input.value);
+                const selectedAddress = document.querySelector('input[name="seller-address"]:checked');
+                if (!selectedAddress) {
+                    throw new Error('กรุณาเลือกที่อยู่ของผู้ขาย');
+                }
+
+                const product = {
+                    id: Date.now(),
+                    name: document.getElementById('product-name').value.trim(),
+                    category: document.getElementById('product-category').value,
+                    price: Number(document.getElementById('product-price').value),
+                    description: document.getElementById('product-desc').value.trim(),
+                    address: selectedAddress.value,
+                    condition: conditions.join(', '),
+                    contact: document.getElementById('product-contact').value.trim(),
+                    image: images[0],
+                    images,
+                    createdAt: new Date().toISOString()
+                };
+
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                const ownerKey = currentUser?.uid || currentUser?.email || 'guest';
+                const myProductsKey = `myProducts:${ownerKey}`;
+                const myProducts = JSON.parse(localStorage.getItem(myProductsKey)) || [];
+                const allProducts = JSON.parse(localStorage.getItem('allProducts')) || [];
+                product.ownerId = currentUser?.uid || '';
+                product.ownerEmail = currentUser?.email || '';
+                myProducts.push(product);
+                allProducts.push(product);
+                localStorage.setItem(myProductsKey, JSON.stringify(myProducts));
+                localStorage.setItem('allProducts', JSON.stringify(allProducts));
+
+                window.location.href = 'my-products.html';
+            } catch (error) {
+                submitButton.disabled = false;
+                submitButton.textContent = 'ลงประกาศ';
+                alert(error.message || 'ไม่สามารถลงประกาศได้ กรุณาลองใหม่อีกครั้ง');
+            }
+        });
+    </script>
+</body>
+</html>

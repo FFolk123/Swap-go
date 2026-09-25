@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตะกร้าสินค้า - Swap&go</title>
+     <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+ 
+    <style>
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 998;
+        }
+        .sidebar-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 260px;
+            height: 100%;
+            background: #fff;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            padding: 20px 0;
+            transition: left 0.3s ease;
+            z-index: 999;
+            overflow-y: auto;
+        }
+        .sidebar.active {
+            left: 0;
+        }
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px 15px 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+        }
+        .sidebar-header h3 {
+            font-size: 1.1rem;
+            color: #004d34;
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #666;
+            cursor: pointer;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #555;
+            text-decoration: none;
+            font-size: 0.92rem;
+            transition: 0.2s;
+            font-family: 'Kanit', sans-serif;
+        }
+        .sidebar-menu li.active a,
+        .sidebar-menu li a:hover {
+            background: #e6f4ea;
+            color: #004d34;
+            font-weight: 500;
+            border-left: 4px solid #004d34;
+        }
+        .sidebar-divider {
+            margin: 15px 20px;
+            border: none;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>เมนูจัดการ</h3>
+            <button class="close-btn" id="close-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="active"><a href="index.html"><i class="fa-solid fa-house"></i> หน้าแรก</a></li>
+            <li><a href="catalog.html"><i class="fa-solid fa-border-all"></i> สินค้าทั้งหมด</a></li>
+            <li><a href="profile.html"><i class="fa-solid fa-user"></i> โปรไฟล์ของฉัน</a></li>
+            <li><a href="cart.html"><i class="fa-solid fa-cart-shopping"></i> ตะกร้าสินค้า</a></li>
+            <li><a href="my-products.html"><i class="fa-solid fa-box"></i> สินค้าของฉัน</a></li>
+            <li><a href="account-settings.html"><i class="fa-solid fa-gear"></i> ตั้งค่าบัญชี</a></li>
+        </ul>
+        </ul>
+        <hr class="sidebar-divider">
+        <ul class="sidebar-menu">
+            <li><a href="index-regis.html" style="color: #dc3545;"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</a></li>
+        </ul>
+    </aside>
+
+    <header class="navbar">
+        <a href="index-regis.html" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #004d34; font-weight: 700; font-size: 1.2rem;">
+                <img src="logo.png" alt="Logo" style="width: 35px; height: 35px; object-fit: cover; border-radius: 50%;"> 
+                Swap&go
+            </a>
+        <ul class="nav-links">
+            <li><a href="index.html">หน้าแรก</a></li>
+            <li><a href="catalog.html">สินค้าทั้งหมด</a></li>
+            <li><a href="category.html">หมวดหมู่</a></li>
+        </ul>
+        <div class="nav-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="ค้นหา...">
+        </div>
+        <div class="nav-right-icons" style="display: flex; gap: 20px; align-items: center; font-size: 1.2rem; cursor: pointer;">
+            <a href="cart.html" style="color: inherit; text-decoration: none; position: relative;">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span class="cart-badge" id="cart-badge" style="position: absolute; top: -5px; right: -8px; background: #ff4757; color: white; font-size: 0.65rem; padding: 1px 5px; border-radius: 50%;">2</span>
+            </a>
+            <a href="profile.html" class="nav-profile-link">
+                <div class="nav-profile-circle" id="nav-profile-container">
+                    <i class="fa-solid fa-user" id="nav-user-icon"></i>
+                </div>
+            </a>
+            <i class="fa-solid fa-bars" id="menu-toggle" title="เปิด/ปิดเมนู" style="cursor: pointer;"></i>
+        </div>
+    </header>
+
+    <main class="cart-container">
+        <h1 class="cart-page-title">ตะกร้าสินค้า <span style="font-size: 1rem; color: #666; font-weight: normal;">(0 รายการ)</span></h1>
+
+        <div class="cart-items-list">
+        </div>
+
+        <div class="cart-summary-box">
+            <h3 class="summary-title">สรุปคำสั่งซื้อ</h3>
+            <div class="summary-row">
+                <span id="summary-item-count">ยอดรวมสินค้า (0 รายการ)</span>
+                <span class="summary-total-price" id="summary-total-price">฿0</span>
+            </div>
+            <button class="btn-checkout" id="checkout-btn">ดำเนินการสั่งซื้อ</button>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-contact-container">
+            <div class="footer-contact-left">
+                <div class="logo">
+            <a href="index.html"></a>
+            <img src="logo.png"> Swap&go
+        </div>
+                <h3 class="footer-contact-title">ติดต่อเรา</h3>
+                <p class="footer-contact-desc">มีข้อสงสัย หรือต้องการสอบถามข้อมูลเพิ่มเติม สามารถติดต่อเราได้ผ่านช่องทางด้านล่างนี้</p>
+                <ul class="footer-contact-info">
+                    <li><i class="fa-solid fa-envelope"></i> contact.swapandgo@gmail.com</li>
+                    <li><i class="fa-solid fa-location-dot"></i> มหาวิทยาลัยเทคโนโลยีราชมงคลตะวันออก วิทยาเขตบางพระ</li>
+                </ul>
+                <div class="footer-social-icons">
+                    <a href="https://line.me/ti/p/edEMCFLm-k" class="footer-social-icon social-line"><i class="fa-brands fa-line"></i></a>
+                    <a href="https://www.instagram.com/yoxurth?stkn=MTA5b3k5a3kzOGQ1NA==" class="footer-social-icon social-ig"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/share/1MLeNK6Gc1/?mibextid=wwXIfr" class="footer-social-icon social-fb"><i class="fa-brands fa-facebook-f"></i></a>
+                </div>
+            </div>
+            <div class="footer-contact-right">
+                <img src="river.jpg" alt="RMUTTO Building">
+            </div>
+        </div>
+        <div class="footer-bottom-bar">
+            <p>&copy; 2026 Swap&go. All rights reserved. RMUTTO Student Marketplace.</p>
+        </div>
+    </footer>
+
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const closeBtn = document.getElementById('close-btn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+        if (menuToggle && sidebar && sidebarOverlay && closeBtn) {
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.add('active');
+                sidebarOverlay.classList.add('active');
+            });
+
+            closeBtn.addEventListener('click', closeSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
+
+            function closeSidebar() {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            }
+        }
+
+        function loadCartItems() {
+      
+            const oldCheckboxes = document.querySelectorAll('.item-check');
+            let checkedStates = [];
+            oldCheckboxes.forEach(chk => {
+                checkedStates.push(chk.checked);
+            });
+
+            const cart = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const listContainer = document.querySelector('.cart-items-list');
+            const pageTitle = document.querySelector('.cart-page-title');
+            
+            if (!listContainer) return;
+
+            let htmlContent = '';
+
+            if (cart.length === 0) {
+                listContainer.innerHTML = `<p style="text-align:center; color:#666; padding: 20px;">ไม่มีสินค้าในตะกร้า</p>`;
+            } else {
+                cart.forEach((item, index) => {
+              
+                    let isChecked = checkedStates[index] ? 'checked' : '';
+
+                    htmlContent += `
+                        <div class="cart-item-card" data-price="${item.price}" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                            <div class="cart-item-left" style="display: flex; align-items: center; gap: 15px;">
+                                <input type="checkbox" class="cart-checkbox item-check" data-index="${index}" ${isChecked} onchange="updateSummary()" style="width: 18px; height: 18px; accent-color: #004d34;">
+                                <div class="cart-item-img">
+                                    <img src="${item.image}" alt="${item.name}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px;">
+                                </div>
+                                <div class="cart-item-details">
+                                    <h3 class="cart-item-title" style="font-size: 1rem; font-weight: 500; margin-bottom: 5px; color: #222;">${item.name}</h3>
+                                    <div class="cart-item-price" style="font-size: 0.95rem; font-weight: 600; color: #004d34;">฿${item.price.toLocaleString()}</div>
+                                </div>
+                            </div>
+                            <div class="cart-item-right" style="display: flex; align-items: center; gap: 20px;">
+                                <div class="quantity-control" style="display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden;">
+                                    <button class="qty-btn minus-btn" onclick="updateQuantity(${index}, -1)" style="background: #f8f9fa; border: none; padding: 5px 12px; cursor: pointer; font-weight: bold;">-</button>
+                                    <input type="text" class="qty-input" value="${item.quantity || 1}" readonly style="width: 35px; text-align: center; border: none; font-size: 0.95rem;">
+                                    <button class="qty-btn plus-btn" onclick="updateQuantity(${index}, 1)" style="background: #f8f9fa; border: none; padding: 5px 12px; cursor: pointer; font-weight: bold;">+</button>
+                                </div>
+                                <button class="remove-item-btn" onclick="removeItem(${index})" style="background: none; border: none; color: #ff4757; font-size: 1.1rem; cursor: pointer;"><i class="fa-regular fa-trash-can"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+                listContainer.innerHTML = htmlContent;
+            }
+
+            if (pageTitle) {
+                pageTitle.innerHTML = `ตะกร้าสินค้า <span style="font-size: 1rem; color: #666; font-weight: normal;">(${cart.length} รายการ)</span>`;
+            }
+            
+            updateSummary();
+        }
+
+        window.updateSummary = function() {
+            const cart = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const checkboxes = document.querySelectorAll('.item-check');
+            let subtotal = 0;
+            let selectedCount = 0;
+
+            checkboxes.forEach((chk, index) => {
+                if (chk.checked && cart[index]) {
+                    subtotal += cart[index].price * (cart[index].quantity || 1);
+                    selectedCount += (cart[index].quantity || 1);
+                }
+            });
+
+            const summaryCount = document.getElementById('summary-item-count');
+            const summaryPrice = document.getElementById('summary-total-price');
+            if (summaryCount) summaryCount.textContent = `ยอดรวมสินค้า (${selectedCount} รายการ)`;
+            if (summaryPrice) summaryPrice.textContent = `฿${subtotal.toLocaleString()}`;
+        };
+
+        window.updateQuantity = function(index, change) {
+            let cart = JSON.parse(localStorage.getItem('cartItems')) || [];
+            if (cart[index]) {
+                cart[index].quantity = (cart[index].quantity || 1) + change;
+                if (cart[index].quantity <= 0) {
+                    cart.splice(index, 1);
+                }
+                localStorage.setItem('cartItems', JSON.stringify(cart));
+                loadCartItems();
+                updateCartBadge();
+            }
+        };
+
+        window.removeItem = function(index) {
+            let cart = JSON.parse(localStorage.getItem('cartItems')) || [];
+            cart.splice(index, 1);
+            localStorage.setItem('cartItems', JSON.stringify(cart));
+            loadCartItems();
+            updateCartBadge();
+        };
+
+        const checkoutBtn = document.getElementById('checkout-btn');
+        if (checkoutBtn) {
+            checkoutBtn.addEventListener('click', () => {
+                const cart = JSON.parse(localStorage.getItem('cartItems')) || [];
+                const checkboxes = document.querySelectorAll('.item-check');
+                let selectedItems = [];
+
+                checkboxes.forEach((chk, index) => {
+                    if (chk.checked && cart[index]) {
+                        selectedItems.push(cart[index]);
+                    }
+                });
+
+                if (selectedItems.length === 0) {
+                    alert('กรุณาเลือกสินค้าอย่างน้อย 1 รายการก่อนดำเนินการต่อ');
+                    return;
+                }
+
+                localStorage.setItem('checkoutItems', JSON.stringify(selectedItems));
+                window.location.href = 'checkout.html';
+            });
+        }
+
+        function updateCartBadge() {
+            const cart = JSON.parse(localStorage.getItem('cartItems')) || [];
+            let totalCount = 0;
+            cart.forEach(item => {
+                totalCount += (item.quantity || 1);
+            });
+
+            const badge = document.getElementById('cart-badge');
+            if (badge) {
+                badge.textContent = totalCount;
+                badge.style.display = totalCount > 0 ? 'inline-block' : 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedData = JSON.parse(localStorage.getItem('userAccountSettings')) || {};
+            const navProfileContainer = document.getElementById('nav-profile-container');
+
+            if (navProfileContainer) {
+                if (savedData.avatarImage) {
+                    navProfileContainer.innerHTML = `
+                        <img src="${savedData.avatarImage}" alt="Profile">
+                    `;
+                } else {
+                    navProfileContainer.innerHTML = `
+                        <i class="fa-solid fa-user" id="nav-user-icon"></i>
+                    `;
+                }
+            }
+
+            loadCartItems();
+            updateCartBadge();
+        });
+    </script>
+</body>
+</html>

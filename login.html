@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ - Swap&go</title>
+     <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="register-body">
+
+    <div class="register-container">
+        <div class="register-left" style="background: url('rmtto.jpg') center/cover no-repeat;">
+            <div class="overlay-card">
+                <h2>ยินดีต้อนรับกลับ</h2>
+                <p>เข้าสู่ระบบเพื่อใช้งาน Swap&go</p>
+                <p class="quote-text">“ของดี ส่งต่อได้เสมอ เริ่มต้นได้ที่นี่”</p>
+            </div>
+        </div>
+
+        <div class="register-right">
+            <div class="form-header">
+                <h2>เข้าสู่ระบบ</h2>
+            </div>
+
+            <button type="button" class="btn-google" id="google-login-btn">
+                <i class="fa-brands fa-google"></i> ดำเนินการต่อด้วย Google
+            </button>
+
+            <div class="form-footer">
+                <p>ยินดีต้อนรับ</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWXQEVSI4lBR0zTlvJwbGHRLvuA40AfoE",
+            authDomain: "swapandgo-rmtto.firebaseapp.com",
+            projectId: "swapandgo-rmtto",
+            storageBucket: "swapandgo-rmtto.firebasestorage.app",
+            messagingSenderId: "163303409596",
+            appId: "1:163303409596:web:4871f953eff2fbecd28db9",
+            measurementId: "G-HQ8L78LSRH"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        document.getElementById("google-login-btn").addEventListener("click", () => {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    const user = result.user;
+
+                    const googleName = user.displayName || "";
+                    const googleEmail = user.email || "";
+                    const googlePhoto = user.photoURL || ""; 
+                  
+                    let savedData = JSON.parse(localStorage.getItem('userAccountSettings')) || {};
+
+                    savedData.fullname = googleName;
+                    savedData.email = googleEmail;
+                    savedData.avatarImage = googlePhoto;
+                    savedData.uid = user.uid;
+
+                    localStorage.setItem('userAccountSettings', JSON.stringify(savedData));
+                    localStorage.setItem('currentUser', JSON.stringify({
+                        uid: user.uid,
+                        email: googleEmail,
+                        name: googleName
+                    }));
+
+                    alert("เข้าสู่ระบบสำเร็จ: " + googleName);
+                    window.location.href = "index.html";
+                })
+                .catch((error) => {
+                    console.error(error.code, error.message);
+                    alert("เกิดข้อผิดพลาด: " + error.message);
+                });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายละเอียดสินค้า - Swap&go</title>
+  <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-graduation-cap"></i> Swap&go
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">หน้าแรก</a></li>
+            <li><a href="catalog.html">สินค้าทั้งหมด</a></li>
+        </ul>
+        <div class="nav-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="ค้นหา...">
+        </div>
+        <div class="auth-buttons">
+            <a href="login.html" class="btn-login">เข้าสู่ระบบ</a>
+        </div>
+    </header>
+
+    <div class="breadcrumb">
+        <a href="category.html">หมวดหมู่</a> &gt; <a href="catalog.html">หนังสือ</a> &gt; <span>หนังสือชีววิทยา</span>
+    </div>
+
+
+    <main class="product-detail-container">
+        
+
+        <div class="product-gallery">
+            <div class="main-product-img">
+                <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=600" alt="หนังสือชีววิทยา">
+            </div>
+            <div class="thumbnail-list">
+                <div class="thumb-item active">
+                    <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=200" alt="thumb-1">
+                </div>
+                <div class="thumb-item">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=200" alt="thumb-2">
+                </div>
+                <div class="thumb-item">
+                    <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=200" alt="thumb-3">
+                </div>
+            </div>
+        </div>
+
+  
+        <div class="product-info-section">
+            <h1 class="product-main-title">หนังสือเรียนคอมพิวเตอร์กราฟิก มือสองสภาพดี</h1>
+            <div class="product-main-price">฿250</div>
+            
+            <ul class="product-meta-list">
+                <li><strong>หมวดหมู่:</strong> หนังสือ</li>
+                <li><strong>ลงขายเมื่อ:</strong> 12 สิงหาคม 2569</li>
+                <li><strong>สถานะ:</strong> มีสินค้า / ขายแล้ว</li>
+            </ul>
+
+            <div class="product-description-block">
+                <h3 class="desc-title">รายละเอียดสินค้า</h3>
+                <p class="desc-text">หนังสือเรียนคอมพิวเตอร์กราฟิก ฉบับสมบูรณ์ สภาพดี ไม่มีรอยขีดเขียนด้านใน เหมาะสำหรับนักศึกษาใช้งานเรียนต่อได้เลย</p>
+            </div>
+        </div>
+
+        <div class="auth-guard-box">
+            <i class="fa-solid fa-lock guard-icon"></i>
+            <h2 class="guard-title">เข้าสู่ระบบเพื่อติดต่อผู้ขาย</h2>
+            <p class="guard-subtitle">กรุณาเข้าสู่ระบบเพื่อซื้อสินค้าและติดต่อผู้ขายได้ดียิ่งขึ้น</p>
+            <div class="guard-buttons">
+                <a href="login.html" class="btn-guard-login">เข้าสู่ระบบ</a>    
+            </div>
+        </div>
+
+    </main>
+ 
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+    
+    const isLogined = localStorage.getItem('isLoggedIn') === 'true' || localStorage.getItem('currentUser') !== null;
+
+ 
+    const actionButtonContainer = document.querySelector('.product-actions') || document.querySelector('.action-buttons') || document.getElementById('action-container');
+
+    if (actionButtonContainer) {
+        if (!isLogined) {
+        
+            actionButtonContainer.innerHTML = `
+                <a href="login.html" class="btn-login-required" style="display: block; width: 100%; background: #004d34; color: #fff; text-align: center; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 1rem; font-weight: 500;">
+                    <i class="fa-solid fa-right-to-bracket"></i> เข้าสู่ระบบเพื่อซื้อสินค้า
+                </a>
+            `;
+        } else {
+          
+        }
+    }
+});
+        const thumbnails = document.querySelectorAll('.thumb-item');
+        const mainImage = document.querySelector('.main-product-img img');
+
+        thumbnails.forEach(thumb => {
+            thumb.addEventListener('click', function() {
+             
+                thumbnails.forEach(t => t.classList.remove('active'));
+               
+                this.classList.add('active');
+                
+             
+                const clickedImgSrc = this.querySelector('img').src;
+                mainImage.src = clickedImgSrc;
+            });
+        });
+    </script>
+
+</body>
+</html>
+<footer class="site-footer">
+    <div class="footer-contact-container">
+        
+        <div class="footer-contact-left">
+            <div class="logo">
+            <a href="index-regis.html"></a>
+            <img src="logo.png"> Swap&go
+        </div>
+            <h3 class="footer-contact-title">ติดต่อเรา</h3>
+            <p class="footer-contact-desc">มีข้อสงสัย หรือต้องการสอบถามข้อมูลเพิ่มเติม สามารถติดต่อเราได้ผ่านช่องทางด้านล่างนี้</p>
+            
+            <ul class="footer-contact-info">
+                <li><i class="fa-solid fa-envelope"></i> contact.swapandgo@gmail.com</li>
+                <li><i class="fa-solid fa-location-dot"></i> มหาวิทยาลัยเทคโนโลยีราชมงคลตะวันออก วิทยาเขตบางพระ</li>
+            </ul>
+
+            <div class="footer-social-icons">
+                    <a href="https://line.me/ti/p/edEMCFLm-k" class="footer-social-icon social-line"><i class="fa-brands fa-line"></i></a>
+                    <a href="https://www.instagram.com/yoxurth?stkn=MTA5b3k5a3kzOGQ1NA==" class="footer-social-icon social-ig"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/share/1MLeNK6Gc1/?mibextid=wwXIfr" class="footer-social-icon social-fb"><i class="fa-brands fa-facebook-f"></i></a>
+                </div>
+        </div>
+        <div class="footer-contact-right">
+            <img src="river.jpg" alt="RMUTTO Building">
+        </div>
+
+    </div>
+    <div class="footer-bottom-bar">
+        <p>&copy; 2026 Swap&go. All rights reserved. RMUTTO Student Marketplace.</p>
+    </div>
+</footer>

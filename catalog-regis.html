@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ค้นหาสินค้า - Swap&go</title>
+    <link rel="icon" type="image/png" href="logo.png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .navbar {
+            background: #fff;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .navbar .logo a {
+            color: #004d34;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .navbar .logo img {
+            width: 35px;
+            height: 35px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #444;
+            font-size: 0.95rem;
+            padding: 20px 0;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            color: #004d34;
+            font-weight: 500;
+        }
+
+        .nav-search {
+            background: #f1f3f5;
+            padding: 6px 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 250px;
+        }
+
+        .nav-search input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .btn-login-custom {
+            background: #ffffff;
+            color: #004d34;
+            border: 2px solid #004d34;
+            padding: 7px 22px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-block;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-login-custom:hover,
+        .btn-login-custom:active {
+            background: #004d34;
+            color: #ffffff;
+        }
+
+        .auth-buttons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-toggle {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border: none;
+            background: transparent;
+            color: #004d34;
+            font-size: 25px;
+            cursor: pointer;
+            padding: 0;
+            border-radius: 8px;
+        }
+
+        .menu-toggle:hover {
+            background: #e8f8ef;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1998;
+            display: none;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100vh;
+            background: #fff;
+            z-index: 1999;
+            transition: left 0.3s ease;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.15);
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .sidebar-header h3 {
+            color: #004d34;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            width: 35px;
+            height: 35px;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-size: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        .close-btn:hover {
+            background: #f1f1f1;
+            color: #333;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 15px 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            width: 100%;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 100%;
+            padding: 15px 25px;
+            text-decoration: none;
+            color: #555;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+
+        .sidebar-menu li a i {
+            width: 22px;
+            text-align: center;
+            font-size: 19px;
+            color: #006b48;
+        }
+
+        .sidebar-menu li a:hover {
+            background: #e8f8ef;
+            color: #004d34;
+        }
+
+        .sidebar-menu li.active a {
+            background: #e8f8ef;
+            color: #004d34;
+            font-weight: 500;
+            border-left: 3px solid #00865a;
+        }
+
+        .sidebar-menu li.active a i {
+            color: #006b48;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: #eee;
+            margin: 10px 20px;
+        }
+
+        .catalog-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 30px;
+        }
+
+        .sidebar-filter {
+            width: 260px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #eee;
+            height: fit-content;
+        }
+
+        .filter-group {
+            margin-bottom: 25px;
+        }
+
+        .filter-title {
+            font-size: 1.15rem;
+            margin-bottom: 15px;
+            color: #111;
+            font-weight: 600;
+        }
+
+        .checkbox-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checkbox-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-list input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #004d34;
+            cursor: pointer;
+        }
+
+        .price-slider {
+            width: 100%;
+            accent-color: #004d34;
+            cursor: pointer;
+        }
+
+        .price-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #111;
+            margin-top: 8px;
+        }
+
+        #btn-search-filter {
+            width: 100%;
+            background: #004d34;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        #btn-search-filter:hover {
+            background: #003825;
+        }
+
+        .catalog-content {
+            flex: 1;
+        }
+
+        .catalog-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 1px solid #eee;
+        }
+
+        .catalog-title-group {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .catalog-title {
+            font-size: 1.25rem;
+            color: #222;
+        }
+
+        .item-count {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .sort-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .sort-dropdown select {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Kanit', sans-serif;
+            outline: none;
+            background: #fff;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .footer-contact-right img {
+            width: 100%;
+            max-height: 220px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 15px;
+                flex-wrap: wrap;
+                height: auto;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .nav-search {
+                order: 3;
+                width: 100%;
+                margin-top: 5px;
+            }
+
+            .catalog-container {
+                flex-direction: column;
+            }
+
+            .sidebar-filter {
+                width: 100%;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+            }
+
+            .btn-login-custom {
+                padding: 6px 15px;
+            }
+
+            .menu-toggle {
+                display: flex !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 270px;
+                left: -290px;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .catalog-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>เมนูจัดการ</h3>
+            <button class="close-btn" id="closeSidebar" type="button">
+                &times;
+            </button>
+        </div>
+
+        <ul class="sidebar-menu">
+
+            <li>
+                <a href="index-regis.html">
+                    <i class="fa-solid fa-house"></i>
+                    <span>หน้าแรก</span>
+                </a>
+            </li>
+
+            <li class="active">
+                <a href="catalog-regis.html">
+                    <i class="fa-solid fa-table-cells-large"></i>
+                    <span>สินค้าทั้งหมด</span>
+                </a>
+            </li>
+            <li>
+                <div class="sidebar-divider"></div>
+            </li>
+
+            <li>
+                <a href="login.html">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>เข้าสู่ระบบ</span>
+                </a>
+            </li>
+
+        </ul>
+    </aside>
+
+    <header class="navbar">
+
+        <div class="logo">
+            <a href="index-regis.html">
+                <img src="logo.png" alt="Logo">
+                Swap&go
+            </a>
+        </div>
+
+        <ul class="nav-links">
+            <li>
+                <a href="index-regis.html">หน้าแรก</a>
+            </li>
+
+            <li>
+                <a href="catalog-regis.html" class="active">
+                    สินค้าทั้งหมด
+                </a>
+            </li>
+        </ul>
+
+        <div class="nav-search">
+            <i class="fa-solid fa-magnifying-glass" style="color: #888;"></i>
+            <input type="text" id="catalog-search" placeholder="ค้นหาชื่อสินค้า...">
+        </div>
+
+        <div class="auth-buttons">
+
+            <a href="login.html" class="btn-login-custom">
+                เข้าสู่ระบบ
+            </a>
+
+            <button
+                class="menu-toggle"
+                id="menuToggle"
+                type="button"
+                aria-label="เปิดเมนู"
+            >
+                ☰
+            </button>
+
+        </div>
+
+    </header>
+
+    <main class="catalog-container">
+
+        <aside class="sidebar-filter">
+
+            <div class="filter-group">
+                <ul class="checkbox-list">
+                    <li>
+                        <input type="checkbox" value="หนังสือ" class="cat-checkbox">
+                        <label>หนังสือ</label>
+                    </li>
+
+                    <li>
+                        <input type="checkbox" value="อุปกรณ์ไอที" class="cat-checkbox">
+                        <label>อุปกรณ์ไอที</label>
+                    </li>
+
+                    <li>
+                        <input type="checkbox" value="เสื้อผ้า" class="cat-checkbox">
+                        <label>เสื้อผ้า</label>
+                    </li>
+
+                    <li>
+                        <input type="checkbox" value="อุปกรณ์การเรียน" class="cat-checkbox">
+                        <label>อุปกรณ์การเรียน</label>
+                    </li>
+
+                    <li>
+                        <input type="checkbox" value="ของใช้ในหอ" class="cat-checkbox">
+                        <label>ของใช้ในหอ</label>
+                    </li>
+
+                    <li>
+                        <input type="checkbox" value="ของใช้ส่วนตัว" class="cat-checkbox">
+                        <label>ของใช้ส่วนตัว</label>
+                    </li>
+
+                    <li>
+                        <input type="checkbox" value="อื่นๆ" class="cat-checkbox">
+                        <label>อื่นๆ</label>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="filter-group">
+                <h3 class="filter-title">ช่วงราคา</h3>
+
+                <div class="price-slider-wrapper">
+                    <input
+                        type="range"
+                        id="priceSlider"
+                            min="0"
+                            max="10000000"
+                            value="10000000"
+                        class="price-slider"
+                    >
+
+                    <div class="price-labels">
+                        <span id="minPrice">0</span>
+                            <span id="maxPrice">10,000,000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h3 class="filter-title">สภาพสินค้า</h3>
+
+                <ul class="checkbox-list">
+
+                    <li>
+                        <input
+                            type="checkbox"
+                            value="มือสอง-สภาพดี"
+                            class="cond-checkbox"
+                        >
+                        <label>มือสอง-สภาพดี</label>
+                    </li>
+
+                    <li>
+                        <input
+                            type="checkbox"
+                            value="มือสอง-มีร่องรอย"
+                            class="cond-checkbox"
+                        >
+                        <label>มือสอง-ร่องรอย</label>
+                    </li>
+
+                </ul>
+            </div>
+
+            <button id="btn-search-filter">
+                ค้นหา
+            </button>
+
+        </aside>
+
+        <section class="catalog-content">
+
+            <div class="catalog-header">
+
+                <div class="catalog-title-group">
+                    <h1 class="catalog-title">
+                        สินค้าทั้งหมด
+                    </h1>
+
+                    <span class="item-count" id="item-count">
+                        (0 รายการ)
+                    </span>
+                </div>
+
+                <div class="sort-dropdown">
+
+                    <span>เรียงตาม:</span>
+
+                    <select id="sort-select">
+
+                        <option value="latest">
+                            ล่าสุด
+                        </option>
+
+                        <option value="price-low">
+                            ราคา: ต่ำไปสูง
+                        </option>
+
+                        <option value="price-high">
+                            ราคา: สูงไปต่ำ
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div
+                class="product-grid"
+                id="catalog-grid"
+            ></div>
+
+        </section>
+
+    </main>
+
+    <footer class="site-footer" style="margin-top: 50px;">
+
+        <div class="footer-contact-container">
+
+            <div class="footer-contact-left">
+
+                <div class="footer-logo">
+                    <a
+                        href="index-regis.html"
+                        style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #004d34; font-weight: 700; font-size: 1.1rem;"
+                    >
+                        <img
+                            src="logo.png"
+                            alt="Logo"
+                            style="width: 30px; height: 30px; object-fit: cover; border-radius: 50%;"
+                        >
+                        Swap&go
+                    </a>
+                </div>
+
+                <h3 class="footer-contact-title">
+                    ติดต่อเรา
+                </h3>
+
+                <p class="footer-contact-desc">
+                    มีข้อสงสัย หรือต้องการสอบถามข้อมูลเพิ่มเติม สามารถติดต่อเราได้ผ่านช่องทางด้านล่างนี้
+                </p>
+
+                <ul class="footer-contact-info">
+
+                    <li>
+                        <i class="fa-solid fa-envelope"></i>
+                        contact.swapandgo@gmail.com
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-location-dot"></i>
+                        มหาวิทยาลัยเทคโนโลยีราชมงคลตะวันออก วิทยาเขตบางพระ
+                    </li>
+
+                </ul>
+
+                <div class="footer-social-icons">
+
+                    <a
+                        href="https://line.me/ti/p/edEMCFLm-k"
+                        class="footer-social-icon social-line"
+                    >
+                        <i class="fa-brands fa-line"></i>
+                    </a>
+
+                    <a
+                        href="https://www.instagram.com/yoxurth?stkn=MTA5b3k5a3kzOGQ1NA=="
+                        class="footer-social-icon social-ig"
+                    >
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+
+                    <a
+                        href="https://www.facebook.com/share/1MLeNK6Gc1/?mibextid=wwXIfr"
+                        class="footer-social-icon social-fb"
+                    >
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="footer-contact-right">
+                <img
+                    src="river.jpg"
+                    alt="RMUTTO Building"
+                >
+            </div>
+
+        </div>
+
+        <div class="footer-bottom-bar">
+            <p>
+                &copy; 2026 Swap&go. All rights reserved. RMUTTO Student Marketplace.
+            </p>
+        </div>
+
+    </footer>
+
+    <script>
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.getElementById("sidebar");
+        const sidebarOverlay = document.getElementById("sidebarOverlay");
+        const closeSidebar = document.getElementById("closeSidebar");
+
+        function openSidebar() {
+            sidebar.classList.add("active");
+            sidebarOverlay.classList.add("active");
+            document.body.style.overflow = "hidden";
+        }
+
+        function hideSidebar() {
+            sidebar.classList.remove("active");
+            sidebarOverlay.classList.remove("active");
+            document.body.style.overflow = "";
+        }
+
+        menuToggle.addEventListener("click", openSidebar);
+
+        closeSidebar.addEventListener("click", hideSidebar);
+
+        sidebarOverlay.addEventListener("click", hideSidebar);
+
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Escape") {
+                hideSidebar();
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryParam = urlParams.get("category");
+            const searchParam = urlParams.get("search") || '';
+            const searchInput = document.getElementById('catalog-search');
+
+            if (searchInput && searchParam) searchInput.value = searchParam;
+
+            if (categoryParam) {
+                document.querySelectorAll(".cat-checkbox").forEach(cb => {
+                    if (cb.value === categoryParam) {
+                        cb.checked = true;
+                    }
+                });
+            }
+
+            filterAndRenderProducts();
+
+            const searchBtn = document.getElementById("btn-search-filter");
+
+            if (searchBtn) {
+                searchBtn.addEventListener(
+                    "click",
+                    filterAndRenderProducts
+                );
+            }
+
+            const sortSelect = document.getElementById("sort-select");
+
+            if (sortSelect) {
+                sortSelect.addEventListener(
+                    "change",
+                    filterAndRenderProducts
+                );
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', filterAndRenderProducts);
+            }
+        });
+
+        const priceSlider = document.getElementById("priceSlider");
+        const maxPriceLabel = document.getElementById("maxPrice");
+
+        if (priceSlider && maxPriceLabel) {
+
+            priceSlider.addEventListener("input", function() {
+                maxPriceLabel.textContent =
+                    Number(this.value).toLocaleString();
+            });
+
+        }
+
+        function filterAndRenderProducts() {
+
+            const catalogGrid =
+                document.getElementById("catalog-grid");
+
+            const itemCountLabel =
+                document.getElementById("item-count");
+
+            const maxPrice =
+                Number(
+                    document.getElementById("priceSlider").value
+                );
+
+            const sortOption =
+                document.getElementById("sort-select").value;
+
+            const selectedCategories =
+                Array.from(
+                    document.querySelectorAll(
+                        ".cat-checkbox:checked"
+                    )
+                ).map(cb => cb.value);
+
+            const selectedConditions =
+                Array.from(
+                    document.querySelectorAll(
+                        ".cond-checkbox:checked"
+                    )
+                ).map(cb => cb.value);
+
+            const categoryAliases = {
+                book: 'หนังสือ',
+                equipment: 'อุปกรณ์การเรียน',
+                electronics: 'อุปกรณ์ไอที',
+                other: 'อื่นๆ'
+            };
+            const searchTerm = (document.getElementById('catalog-search')?.value || '')
+                .trim()
+                .toLocaleLowerCase();
+
+            let allProducts =
+                JSON.parse(
+                    localStorage.getItem("allProducts")
+                ) || [];
+
+            let filtered =
+                selectedCategories.length === 0
+                    ? allProducts
+                    : allProducts.filter(
+                        p => selectedCategories.includes(categoryAliases[p.category] || p.category)
+                    );
+
+            if (searchTerm) {
+                filtered = filtered.filter(p => (p.name || '').toLocaleLowerCase().includes(searchTerm));
+            }
+
+            if (selectedConditions.length > 0) {
+
+                filtered =
+                    filtered.filter(
+                        p => selectedConditions.includes(p.condition)
+                    );
+
+            }
+
+            filtered =
+                filtered.filter(
+                    p => Number(p.price) <= maxPrice
+                );
+
+            if (sortOption === "price-low") {
+
+                filtered.sort(
+                    (a, b) =>
+                        Number(a.price) -
+                        Number(b.price)
+                );
+
+            } else if (sortOption === "price-high") {
+
+                filtered.sort(
+                    (a, b) =>
+                        Number(b.price) -
+                        Number(a.price)
+                );
+
+            } else {
+
+                filtered.sort(
+                    (a, b) =>
+                        b.id - a.id
+                );
+
+            }
+
+            if (itemCountLabel) {
+
+                itemCountLabel.textContent =
+                    `(${filtered.length} รายการ)`;
+
+            }
+
+            if (filtered.length === 0) {
+
+                catalogGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 50px; color: #64748b;">
+                        <i class="fa-solid fa-box-open" style="font-size: 3rem; margin-bottom: 15px; color: #cbd5e1;"></i>
+                        <p style="font-size: 1.1rem; font-weight: 500;">
+                            ไม่พบสินค้าที่ตรงกับการค้นหา
+                        </p>
+                    </div>
+                `;
+
+                return;
+            }
+
+            catalogGrid.innerHTML = "";
+
+            filtered.forEach(product => {
+
+                const card =
+                    document.createElement("a");
+
+                card.href =
+                    `product-regis.html?id=${product.id}`;
+
+                card.style.cssText =
+                    "text-decoration: none; color: inherit; display: block;";
+
+                card.innerHTML = `
+                    <div
+                        class="product-card"
+                        style="
+                            background: #fff;
+                            border: 1px solid #e2e8f0;
+                            border-radius: 10px;
+                            overflow: hidden;
+                            padding: 15px;
+                            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+                            cursor: pointer;
+                            height: 100%;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: space-between;
+                        "
+                    >
+                        <div>
+
+                            <img
+                                src="${product.image || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=300'}"
+                                alt="${product.name}"
+                                style="
+                                    width: 100%;
+                                    height: 160px;
+                                    object-fit: cover;
+                                    border-radius: 8px;
+                                    margin-bottom: 10px;
+                                "
+                            >
+
+                            <div
+                                style="
+                                    font-size: 0.95rem;
+                                    font-weight: 500;
+                                    color: #222;
+                                    margin-bottom: 5px;
+                                    display: -webkit-box;
+                                    -webkit-line-clamp: 2;
+                                    -webkit-box-orient: vertical;
+                                    overflow: hidden;
+                                "
+                            >
+                                ${product.name}
+                            </div>
+
+                        </div>
+
+                        <div
+                            style="
+                                font-size: 1rem;
+                                font-weight: 600;
+                                color: #004d34;
+                            "
+                        >
+                            ฿${Number(product.price).toLocaleString()}
+                        </div>
+
+                    </div>
+                `;
+
+                catalogGrid.appendChild(card);
+
+            });
+
+        }
+    </script>
+
+</body>
+</html>

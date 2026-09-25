@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ค้นหาสินค้า - Swap&go</title>
+     <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .navbar {
+            background: #fff;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .navbar .logo a {
+            color: #004d34;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #444;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            color: #004d34;
+            font-weight: 500;
+        }
+
+        .nav-search {
+            background: #f1f3f5;
+            padding: 6px 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 250px;
+        }
+
+        .nav-search input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .nav-right-icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+
+        .nav-right-icons a {
+            color: #444;
+            text-decoration: none;
+            position: relative;
+        }
+        .nav-profile-link {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .nav-profile-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #ddd;
+            border: 1px solid #ccc;
+        }
+
+        .nav-profile-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 998;
+        }
+
+        .sidebar-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 260px;
+            height: 100%;
+            background: #fff;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            padding: 20px 0;
+            transition: left 0.3s ease;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px 15px 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.1rem;
+            color: #004d34;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #555;
+            text-decoration: none;
+            font-size: 0.92rem;
+            transition: 0.2s;
+        }
+
+        .sidebar-menu li.active a,
+        .sidebar-menu li a:hover {
+            background: #e6f4ea;
+            color: #004d34;
+            font-weight: 500;
+            border-left: 4px solid #004d34;
+        }
+
+        .sidebar-divider {
+            margin: 15px 20px;
+            border: none;
+            border-top: 1px solid #eee;
+        }
+
+        .catalog-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 30px;
+        }
+
+        .sidebar-filter {
+            width: 260px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #eee;
+            height: fit-content;
+        }
+
+        .filter-group {
+            margin-bottom: 25px;
+        }
+
+        .filter-title {
+            font-size: 1.15rem;
+            margin-bottom: 15px;
+            color: #111;
+            font-weight: 600;
+        }
+
+        .checkbox-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checkbox-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-list input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #004d34;
+            cursor: pointer;
+        }
+
+        #btn-search-filter {
+            width: 100%;
+            background: #004d34;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        #btn-search-filter:hover {
+            background: #003825;
+        }
+
+        .catalog-content {
+            flex: 1;
+        }
+
+        .catalog-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 1px solid #eee;
+        }
+
+        .catalog-title-group {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .catalog-title {
+            font-size: 1.25rem;
+            color: #222;
+        }
+
+        .item-count {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .sort-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .sort-dropdown select {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Kanit', sans-serif;
+            outline: none;
+            background: #fff;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+    
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        .catalog-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .catalog-content {
+            min-width: 0;
+        }
+
+        .product-grid {
+            width: 100%;
+        }
+
+        @media (max-width: 1100px) {
+            .navbar {
+                padding: 0 20px;
+                gap: 15px;
+            }
+
+            .nav-links {
+                gap: 18px;
+            }
+
+            .nav-search {
+                width: 210px;
+            }
+
+            .catalog-container {
+                gap: 20px;
+            }
+
+            .sidebar-filter {
+                width: 230px;
+                flex-shrink: 0;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                height: auto;
+                min-height: 60px;
+                padding: 10px 15px;
+                flex-wrap: wrap;
+            }
+
+            .navbar .logo {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .navbar .logo a {
+                font-size: 1.05rem;
+                white-space: nowrap;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .nav-search {
+                order: 3;
+                width: 100%;
+                height: 38px;
+                margin-top: 5px;
+            }
+
+            .nav-right-icons {
+                gap: 14px;
+                flex-shrink: 0;
+            }
+
+            .catalog-container {
+                flex-direction: column;
+                width: 100%;
+                margin: 20px auto;
+                padding: 0 15px;
+                gap: 20px;
+            }
+
+            .sidebar-filter {
+                width: 100%;
+                padding: 18px;
+            }
+
+            .filter-group {
+                margin-bottom: 20px;
+            }
+
+            .checkbox-list {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+
+            .catalog-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+                padding: 15px;
+            }
+
+            .catalog-title-group {
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .sort-dropdown {
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .sort-dropdown select {
+                flex: 1;
+                min-width: 0;
+                max-width: 200px;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+            }
+
+            .product-card {
+                padding: 10px !important;
+            }
+
+            .product-card img {
+                height: 140px !important;
+            }
+
+            .site-footer {
+                margin-top: 30px !important;
+            }
+
+            .footer-contact-container {
+                flex-direction: column;
+                gap: 25px;
+            }
+
+            .footer-contact-left,
+            .footer-contact-right {
+                width: 100%;
+            }
+
+            .footer-contact-right img {
+                width: 100%;
+                height: auto;
+            }
+
+            .footer-bottom-bar {
+                text-align: center;
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 9px 12px;
+            }
+
+            .navbar .logo a {
+                font-size: 0.95rem;
+            }
+
+            .nav-right-icons {
+                gap: 10px;
+                font-size: 1.05rem;
+            }
+
+            .nav-profile-circle {
+                width: 28px;
+                height: 28px;
+            }
+
+            .catalog-container {
+                padding: 0 10px;
+                margin: 15px auto;
+            }
+
+            .sidebar-filter {
+                padding: 15px;
+                border-radius: 8px;
+            }
+
+            .checkbox-list {
+                grid-template-columns: 1fr;
+                gap: 9px;
+            }
+
+            .filter-title {
+                font-size: 1.05rem;
+            }
+
+            .catalog-header {
+                padding: 12px;
+                border-radius: 8px;
+            }
+
+            .catalog-title {
+                font-size: 1.1rem;
+            }
+
+            .item-count {
+                font-size: 0.82rem;
+            }
+
+            .sort-dropdown {
+                font-size: 0.85rem;
+            }
+
+            .sort-dropdown select {
+                max-width: 170px;
+                padding: 6px 8px;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+            }
+
+            .product-card {
+                padding: 8px !important;
+                border-radius: 8px !important;
+            }
+
+            .product-card img {
+                height: 115px !important;
+                border-radius: 6px !important;
+                margin-bottom: 7px !important;
+            }
+
+            .product-card div[style*="-webkit-line-clamp"] {
+                font-size: 0.82rem !important;
+            }
+
+            .product-card div[style*="font-size: 1rem"] {
+                font-size: 0.9rem !important;
+            }
+
+            .footer-contact-container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            .footer-contact-desc {
+                font-size: 0.85rem;
+            }
+
+            .footer-contact-info {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .navbar .logo a {
+                font-size: 0.88rem;
+            }
+
+            .nav-right-icons {
+                gap: 7px;
+                font-size: 0.95rem;
+            }
+
+            .nav-profile-circle {
+                width: 26px;
+                height: 26px;
+            }
+
+            .product-grid {
+                gap: 6px;
+            }
+
+            .product-card {
+                padding: 6px !important;
+            }
+
+            .product-card img {
+                height: 100px !important;
+            }
+
+            .catalog-title {
+                font-size: 1rem;
+            }
+
+            .item-count {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>เมนูจัดการ</h3>
+            <button class="close-btn" id="close-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <ul class="sidebar-menu">
+           <li class="active"><a href="index.html"><i class="fa-solid fa-house"></i> หน้าแรก</a></li>
+            <li><a href="catalog.html"><i class="fa-solid fa-border-all"></i> สินค้าทั้งหมด</a></li>
+            <li><a href="profile.html"><i class="fa-solid fa-user"></i> โปรไฟล์ของฉัน</a></li>
+            <li><a href="my-products.html"><i class="fa-solid fa-box"></i> สินค้าของฉัน</a></li>
+             <li><a href="fix.html"><i class="fa-solid fa-pen-to-square"></i></i> แก้ไข้สินค้า</a></li>
+            <li><a href="account-settings.html"><i class="fa-solid fa-gear"></i> ตั้งค่าบัญชี</a></li>
+        </ul>
+        <hr class="sidebar-divider">
+        <ul class="sidebar-menu">
+            <li><a href="index-regis.html" style="color: #dc3545;"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</a></li>
+        </ul>
+    </aside>
+
+    <header class="navbar">
+        <div class="logo">
+            <a href="index.html" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #004d34; font-weight: 700; font-size: 1.2rem;">
+                <img src="logo.png" alt="Logo" style="width: 35px; height: 35px; object-fit: cover; border-radius: 50%;"> 
+                Swap&go
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">หน้าแรก</a></li>
+            <li><a href="catalog.html" class="active" style="color: #004d34; font-weight: 500;">สินค้าทั้งหมด</a></li>
+        </ul>
+        <div class="nav-search">
+            <i class="fa-solid fa-magnifying-glass" style="color: #888;"></i>
+            <input type="text" id="catalog-search" placeholder="ค้นหาชื่อสินค้า...">
+        </div>
+        <div class="nav-right-icons">
+        
+            <a href="profile.html" class="nav-profile-link">
+                <div class="nav-profile-circle" id="nav-profile-container">
+                    <i class="fa-solid fa-user" id="nav-user-icon" style="font-size: 1rem; color: #555;"></i>
+                </div>
+            </a>
+
+            <i class="fa-solid fa-bars" id="menu-toggle" style="cursor: pointer; color: #444;" title="เปิด/ปิดเมนู"></i>
+        </div>
+    </header>
+
+ 
+    <main class="catalog-container">
+
+        <aside class="sidebar-filter">
+           
+            <div class="filter-group">
+                <h3 class="filter-title">หมวดหมู่</h3>
+                <ul class="checkbox-list">
+                    <li><input type="checkbox" value="book" class="cat-checkbox"><label>หนังสือ</label></li>
+                    <li><input type="checkbox" value="electronics" class="cat-checkbox"><label>อุปกรณ์ไอที</label></li>
+                    <li><input type="checkbox" value="other" class="cat-checkbox"><label>เสื้อผ้า</label></li>
+                    <li><input type="checkbox" value="equipment" class="cat-checkbox"><label>อุปกรณ์การเรียน</label></li>
+                    <li><input type="checkbox" value="other" class="cat-checkbox"><label>ของใช้ในหอ</label></li>
+                    <li><input type="checkbox" value="other" class="cat-checkbox"><label>ของใช้ส่วนตัว</label></li>
+                    <li><input type="checkbox" value="other" class="cat-checkbox"><label>อื่นๆ</label></li>
+                </ul>
+            </div>
+
+            <div class="filter-group">
+                <h3 class="filter-title">สภาพสินค้า</h3>
+                <ul class="checkbox-list">
+                    <li><input type="checkbox" value="มือสอง-สภาพดี" class="cond-checkbox"><label>มือสอง-สภาพดี</label></li>
+                    <li><input type="checkbox" value="มือสอง-มีร่องรอย" class="cond-checkbox"><label>มือสอง-ร่องรอย</label></li>
+                </ul>
+            </div>
+
+            <button id="btn-search-filter">ค้นหา</button>
+        </aside>
+        
+        <section class="catalog-content">
+            <div class="catalog-header">
+                <div class="catalog-title-group">
+                    <h1 class="catalog-title">สินค้าทั้งหมด</h1>
+                    <span class="item-count" id="item-count">(0 รายการ)</span>
+                </div>
+                <div class="sort-dropdown">
+                    <span>เรียงตาม:</span>
+                    <select id="sort-select">
+                        <option value="latest">ล่าสุด</option>
+                        <option value="price-low">ราคา: ต่ำไปสูง</option>
+                        <option value="price-high">ราคา: สูงไปต่ำ</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="product-grid" id="catalog-grid">
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer" style="margin-top: 50px;">
+        <div class="footer-contact-container">
+            <div class="footer-contact-left">
+                <div class="footer-logo">
+                    <a href="index.html" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #004d34; font-weight: 700; font-size: 1.1rem;">
+                        <img src="logo.png" alt="Logo" style="width: 30px; height: 30px; object-fit: cover; border-radius: 50%;"> 
+                        Swap&go
+                    </a>
+                </div>
+                <h3 class="footer-contact-title">ติดต่อเรา</h3>
+                <p class="footer-contact-desc">มีข้อสงสัย หรือต้องการสอบถามข้อมูลเพิ่มเติม สามารถติดต่อเราได้ผ่านช่องทางด้านล่างนี้</p>
+                
+                <ul class="footer-contact-info">
+                    <li><i class="fa-solid fa-envelope"></i> contact.swapandgo@gmail.com</li>
+                    <li><i class="fa-solid fa-location-dot"></i> มหาวิทยาลัยเทคโนโลยีราชมงคลตะวันออก วิทยาเขตบางพระ</li>
+                </ul>
+
+                 <div class="footer-social-icons">
+                    <a href="https://line.me/ti/p/edEMCFLm-k" class="footer-social-icon social-line"><i class="fa-brands fa-line"></i></a>
+                    <a href="https://www.instagram.com/yoxurth?stkn=MTA5b3k5a3kzOGQ1NA==" class="footer-social-icon social-ig"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/share/1MLeNK6Gc1/?mibextid=wwXIfr" class="footer-social-icon social-fb"><i class="fa-brands fa-facebook-f"></i></a>
+                </div>
+            </div>
+            <div class="footer-contact-right">
+                <img src="river.jpg" alt="RMUTTO Building">
+            </div>
+        </div>
+        <div class="footer-bottom-bar">
+            <p>&copy; 2026 Swap&go. All rights reserved. RMUTTO Student Marketplace.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedData = JSON.parse(localStorage.getItem('userAccountSettings')) || {};
+            const navProfileContainer = document.getElementById('nav-profile-container');
+
+            if (navProfileContainer) {
+                if (savedData.avatarImage) {
+                    navProfileContainer.innerHTML = `<img src="${savedData.avatarImage}" alt="Profile">`;
+                } else {
+                    navProfileContainer.innerHTML = `<i class="fa-solid fa-user" id="nav-user-icon" style="font-size: 1rem; color: #555;"></i>`;
+                }
+            }
+
+            filterAndRenderProducts();
+
+            const searchBtn = document.getElementById('btn-search-filter');
+            if (searchBtn) {
+                searchBtn.addEventListener('click', filterAndRenderProducts);
+            }
+
+            const sortSelect = document.getElementById('sort-select');
+            if (sortSelect) {
+                sortSelect.addEventListener('change', filterAndRenderProducts);
+            }
+
+            const searchInput = document.getElementById('catalog-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', filterAndRenderProducts);
+            }
+        });
+
+ 
+        const menuToggle = document.getElementById('menu-toggle');
+        const closeBtn = document.getElementById('close-btn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.add('active');
+                sidebarOverlay.classList.add('active');
+            });
+        }
+
+        if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+        if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        }
+
+        function filterAndRenderProducts() {
+            const catalogGrid = document.getElementById('catalog-grid');
+            const itemCountLabel = document.getElementById('item-count');
+            const sortOption = document.getElementById('sort-select').value;
+
+            const selectedCategories = Array.from(document.querySelectorAll('.cat-checkbox:checked'))
+                .map(cb => cb.value);
+
+            const selectedConditions = Array.from(document.querySelectorAll('.cond-checkbox:checked'))
+                .map(cb => cb.value);
+            const searchTerm = (document.getElementById('catalog-search')?.value || '').trim().toLocaleLowerCase();
+            const categoryLabels = {
+                book: 'หนังสือ',
+                equipment: 'อุปกรณ์การเรียน',
+                electronics: 'ไอที / อิเล็กทรอนิกส์',
+                other: 'อื่นๆ'
+            };
+            const categoryAliases = {
+                book: 'book',
+                'หนังสือ': 'book',
+                equipment: 'equipment',
+                'อุปกรณ์การเรียน': 'equipment',
+                electronics: 'electronics',
+                'อุปกรณ์ไอที': 'electronics',
+                'ไอที / อิเล็กทรอนิกส์': 'electronics',
+                other: 'other',
+                'อื่นๆ': 'other',
+                'เสื้อผ้า': 'other',
+                'ของใช้ในหอ': 'other',
+                'ของใช้ส่วนตัว': 'other'
+            };
+            const queryParameters = new URLSearchParams(window.location.search);
+            const requestedCategory = categoryAliases[queryParameters.get('category')] || queryParameters.get('category');
+            const querySearch = queryParameters.get('search') || '';
+            const searchInput = document.getElementById('catalog-search');
+            if (searchInput && querySearch && !searchInput.value) searchInput.value = querySearch;
+
+            let allProducts = JSON.parse(localStorage.getItem('allProducts')) || [];
+
+            let filtered = selectedCategories.length === 0 
+                ? allProducts
+                : allProducts.filter(p => selectedCategories.includes(categoryAliases[p.category] || p.category));
+
+            if (requestedCategory) {
+                filtered = filtered.filter(p => (categoryAliases[p.category] || p.category) === requestedCategory);
+            }
+
+            if (searchTerm) {
+                filtered = filtered.filter(p => (p.name || '').toLocaleLowerCase().includes(searchTerm));
+            }
+
+            if (selectedConditions.length > 0) {
+                filtered = filtered.filter(p => selectedConditions.some(condition => (p.condition || '').includes(condition)));
+            }
+
+            if (sortOption === 'price-low') {
+                filtered.sort((a, b) => Number(a.price) - Number(b.price));
+            } else if (sortOption === 'price-high') {
+                filtered.sort((a, b) => Number(b.price) - Number(a.price));
+            } else {
+                filtered.sort((a, b) => b.id - a.id);
+            }
+
+            if (itemCountLabel) {
+                itemCountLabel.textContent = `(${filtered.length} รายการ)`;
+            }
+
+            if (filtered.length === 0) {
+                catalogGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 50px; color: #64748b;">
+                        <i class="fa-solid fa-box-open" style="font-size: 3rem; margin-bottom: 15px; color: #cbd5e1;"></i>
+                        <p style="font-size: 1.1rem; font-weight: 500;">ไม่พบสินค้าที่ตรงกับการค้นหา</p>
+                    </div>
+                `;
+                return;
+            }
+
+            catalogGrid.innerHTML = '';
+            filtered.forEach(product => {
+                const card = document.createElement('a');
+                card.href = `product-buy.html?id=${product.id}`;
+                card.style.cssText = "text-decoration: none; color: inherit; display: block;";
+
+                card.innerHTML = `
+                    <div class="product-card" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <img src="${product.image}" alt="${product.name}" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;">
+                            <div style="font-size: 0.95rem; font-weight: 500; color: #222; margin-bottom: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${product.name}</div>
+                            <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 6px;">${categoryLabels[product.category] || product.category || 'อื่นๆ'}</div>
+                        </div>
+                        <div style="font-size: 1rem; font-weight: 600; color: #004d34;">฿${Number(product.price).toLocaleString()}</div>
+                    </div>
+                `;
+                catalogGrid.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

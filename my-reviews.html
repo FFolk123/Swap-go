@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รีวิวของฉัน - Swap&go</title>
+
+      <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+   
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f8;
+            color: #333;
+        }
+
+        .navbar {
+            background: #fff;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #eee;
+        }
+
+        .navbar .logo {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #004d34;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            color: #004d34;
+            font-weight: 500;
+        }
+
+        .nav-search {
+            position: relative;
+            background: #eef2f3;
+            border-radius: 20px;
+            padding: 5px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 250px;
+        }
+
+        .nav-search input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .nav-right-icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+
+        .nav-right-icons a, 
+        .nav-right-icons i {
+            color: #333;
+            text-decoration: none;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            background: #ff4757;
+            color: white;
+            font-size: 0.65rem;
+            padding: 1px 5px;
+            border-radius: 50%;
+        }
+
+     
+        .nav-profile-link {
+            color: inherit;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-profile-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #ddd;
+            border: 1px solid #ccc;
+        }
+
+        .nav-profile-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* --- Sidebar Styles --- */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 998;
+        }
+
+        .sidebar-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 260px;
+            height: 100%;
+            background: #fff;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            padding: 20px 0;
+            transition: left 0.3s ease;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px 15px 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.1rem;
+            color: #004d34;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #555;
+            text-decoration: none;
+            font-size: 0.92rem;
+            transition: 0.2s;
+        }
+
+        .sidebar-menu li.active a,
+        .sidebar-menu li a:hover {
+            background: #e6f4ea;
+            color: #004d34;
+            font-weight: 500;
+            border-left: 4px solid #004d34;
+        }
+
+        .sidebar-divider {
+            margin: 15px 20px;
+            border: none;
+            border-top: 1px solid #eee;
+        }
+
+        .main-container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .review-tabs {
+            display: flex;
+            gap: 40px;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+        }
+
+        .review-tab-item {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #777;
+            text-decoration: none;
+            padding-bottom: 10px;
+            position: relative;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .review-tab-item.active {
+            color: #004d34;
+            font-weight: 600;
+        }
+
+        .review-tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #004d34;
+            border-radius: 2px 2px 0 0;
+        }
+
+        /* --- Review Card Box --- */
+        .review-card-box {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .review-left {
+            display: flex;
+            gap: 15px;
+        }
+
+        .review-product-img {
+            width: 75px;
+            height: 75px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #e9ecef;
+        }
+
+        .review-details h4 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #222;
+            margin-bottom: 2px;
+        }
+
+        .review-shop-name {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .review-stars {
+            color: #ffc107;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        .review-comment {
+            font-size: 0.9rem;
+            color: #444;
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 15px;
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .review-actions i {
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .review-actions i:hover {
+            color: #004d34;
+        }
+
+        .review-actions .fa-trash-can:hover {
+            color: #ff4757;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #888;
+            padding: 30px;
+            font-size: 0.95rem;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>เมนูจัดการ</h3>
+            <button class="close-btn" id="close-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="active"><a href="index.html"><i class="fa-solid fa-house"></i> หน้าแรก</a></li>
+            <li><a href="catalog.html"><i class="fa-solid fa-border-all"></i> สินค้าทั้งหมด</a></li>
+            <li><a href="category.html"><i class="fa-solid fa-list"></i> หมวดหมู่</a></li>
+            <li><a href="profile.html"><i class="fa-solid fa-user"></i> โปรไฟล์ของฉัน</a></li>
+            <li><a href="cart.html"><i class="fa-solid fa-cart-shopping"></i> ตะกร้าสินค้า</a></li>
+            <li><a href="my-products.html"><i class="fa-solid fa-box"></i> สินค้าของฉัน</a></li>
+            <li><a href="my-reviews.html"><i class="fa-solid fa-line"></i> แก้ไข้สินค้า</a></li>
+            <li><a href="account-settings.html"><i class="fa-solid fa-gear"></i> ตั้งค่าบัญชี</a></li>
+        </ul>
+        </ul>
+        <hr class="sidebar-divider">
+        <ul class="sidebar-menu">
+            <li><a href="index-regis.html" style="color: #dc3545;"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</a></li>
+        </ul>
+    </aside>
+
+
+    <header class="navbar">
+       <div class="logo">
+            <a href="index.html"></a>
+            <img src="logo.png"> Swap&go
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">หน้าแรก</a></li>
+            <li><a href="catalog.html">สินค้าทั้งหมด</a></li>
+            <li><a href="category.html">หมวดหมู่</a></li>
+        </ul>
+        <div class="nav-search">
+            <i class="fa-solid fa-magnifying-glass" style="color: #888; font-size: 0.85rem;"></i>
+            <input type="text" placeholder="ค้นหา...">
+        </div>
+        <div class="nav-right-icons">
+            <a href="cart.html"><i class="fa-solid fa-cart-shopping"></i><span class="cart-badge" id="cart-badge">2</span></a>
+            
+            <!-- ไอคอนโปรไฟล์บน Navbar (ซิงค์อัตโนมัติ) -->
+            <a href="account-settings.html" class="nav-profile-link">
+                <div class="nav-profile-circle" id="nav-profile-container">
+                    <i class="fa-solid fa-user" id="nav-user-icon" style="font-size: 1rem; color: #555;"></i>
+                </div>
+            </a>
+
+            <i class="fa-solid fa-bars" id="menu-toggle" title="เปิด/ปิดเมนู" style="cursor: pointer;"></i>
+        </div>
+    </header>
+
+    <!-- ส่วนเนื้อหาหลัก -->
+    <main class="main-container">
+        <!-- แท็บสลับหัวข้อรีวิว -->
+        <div class="review-tabs">
+            <button class="review-tab-item active" onclick="switchTab('received')">รีวิวที่ได้รับ</button>
+            <button class="review-tab-item" onclick="switchTab('written')">รีวิวที่ฉันเขียน</button>
+        </div>
+
+        <div id="tab-received" class="tab-content active">
+            <div id="received-list">
+                <div class="review-card-box">
+                    <div class="review-left">
+                        <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=200" alt="สินค้า" class="review-product-img">
+                        <div class="review-details">
+                            <h4>หนังสือเรียนคอมพิวเตอร์กราฟิก</h4>
+                            <div class="review-shop-name">ผู้ซื้อ: นทรา มณีแสง</div>
+                            <div class="review-stars">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                            <div class="review-comment">หนังสือสภาพดีมาก จัดส่งไวทันใจค่ะ</div>
+                        </div>
+                    </div>
+                    <div class="review-actions">
+                        <i class="fa-regular fa-trash-can" title="ลบรีวิว" onclick="deleteReview(this, 'received')"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    
+        <div id="tab-written" class="tab-content">
+            <div id="written-list">
+                <div class="review-card-box">
+                    <div class="review-left">
+                        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=200" alt="สินค้า" class="review-product-img">
+                        <div class="review-details">
+                            <h4>ชื่อสินค้า</h4>
+                            <div class="review-shop-name">ร้าน</div>
+                            <div class="review-stars">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-regular fa-star" style="color: #ccc;"></i>
+                            </div>
+                            <div class="review-comment">คำรีวิว</div>
+                        </div>
+                    </div>
+                    <div class="review-actions">
+                        <i class="fa-solid fa-paperclip" title="แนบไฟล์/รูปภาพ"></i>
+                        <i class="fa-regular fa-trash-can" title="ลบรีวิว" onclick="deleteReview(this, 'written')"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+   
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+         
+            const savedData = JSON.parse(localStorage.getItem('userAccountSettings')) || {};
+            const navProfileContainer = document.getElementById('nav-profile-container');
+
+            if (navProfileContainer) {
+                if (savedData.avatarImage) {
+                    navProfileContainer.innerHTML = `<img src="${savedData.avatarImage}" alt="Profile">`;
+                } else {
+                    navProfileContainer.innerHTML = `<i class="fa-solid fa-user" id="nav-user-icon" style="font-size: 1rem; color: #555;"></i>`;
+                }
+            }
+        });
+
+        const menuToggle = document.getElementById('menu-toggle');
+        const closeBtn = document.getElementById('close-btn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+        if (menuToggle && sidebar && sidebarOverlay && closeBtn) {
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.add('active');
+                sidebarOverlay.classList.add('active');
+            });
+
+            closeBtn.addEventListener('click', closeSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
+
+            function closeSidebar() {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            }
+        }
+
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.review-tab-item');
+            const contents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+
+            if (tabName === 'received') {
+                tabs[0].classList.add('active');
+                document.getElementById('tab-received').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('tab-written').classList.add('active');
+            }
+        }
+
+        function deleteReview(element, type) {
+            if (confirm('คุณต้องการลบรีวิวนี้ใช่หรือไม่?')) {
+                const cardBox = element.closest('.review-card-box');
+                const listContainer = cardBox.parentElement;
+                
+                cardBox.remove();
+
+                if (listContainer.children.length === 0) {
+                    listContainer.innerHTML = `<div class="empty-message">ไม่มีรายการรีวิว</div>`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+ <footer class="site-footer">
+        <div class="footer-contact-container">
+            <div class="footer-contact-left">
+                <div class="logo">
+            <a href="index.html"></a>
+            <img src="logo.png"> Swap&go
+        </div>
+                <h3 class="footer-contact-title">ติดต่อเรา</h3>
+                <p class="footer-contact-desc">มีข้อสงสัย หรือต้องการสอบถามข้อมูลเพิ่มเติม สามารถติดต่อเราได้ผ่านช่องทางด้านล่างนี้</p>
+                
+                <ul class="footer-contact-info">
+                    <li><i class="fa-solid fa-envelope"></i> contact.swapandgo@gmail.com</li>
+                    <li><i class="fa-solid fa-location-dot"></i> มหาวิทยาลัยเทคโนโลยีราชมงคลตะวันออก วิทยาเขตบางพระ</li>
+                </ul>
+
+               <div class="footer-social-icons">
+                    <a href="https://line.me/ti/p/edEMCFLm-k" class="footer-social-icon social-line"><i class="fa-brands fa-line"></i></a>
+                    <a href="https://www.instagram.com/yoxurth?stkn=MTA5b3k5a3kzOGQ1NA==" class="footer-social-icon social-ig"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/share/1MLeNK6Gc1/?mibextid=wwXIfr" class="footer-social-icon social-fb"><i class="fa-brands fa-facebook-f"></i></a>
+                </div> 
+            </div>
+            <div class="footer-contact-right">
+                <img src="river.jpg" alt="RMUTTO Building">
+            </div>
+        </div>
+        <div class="footer-bottom-bar">
+            <p>&copy; 2026 Swap&go. All rights reserved. RMUTTO Student Marketplace.</p>
+        </div>
+    </footer>

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>หมวดหมู่สินค้า - Swap&go</title>
+    <link rel="icon" type="image/png" href="logo.png">
+  
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="sidebar.css">
+ 
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+    
+        .navbar {
+            background: #fff;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #eee;
+        }
+
+        .navbar .logo {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #004d34;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            color: #004d34;
+            font-weight: 500;
+        }
+
+        .nav-search {
+            position: relative;
+            background: #eef2f3;
+            border-radius: 20px;
+            padding: 5px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 250px;
+        }
+
+        .nav-search input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .nav-right-icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+
+        .nav-right-icons a,
+        .nav-right-icons i {
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+   
+        .nav-profile-link {
+            color: inherit;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-profile-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #ddd;
+            border: 1px solid #ccc;
+        }
+
+        .nav-profile-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 998;
+        }
+
+        .sidebar-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 260px;
+            height: 100%;
+            background: #fff;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            padding: 20px 0;
+            transition: left 0.3s ease;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px 15px 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.1rem;
+            color: #004d34;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #555;
+            text-decoration: none;
+            font-size: 0.92rem;
+            transition: 0.2s;
+        }
+
+        .sidebar-menu li.active a,
+        .sidebar-menu li a:hover {
+            background: #e6f4ea;
+            color: #004d34;
+            font-weight: 500;
+            border-left: 4px solid #004d34;
+        }
+
+        .sidebar-divider {
+            margin: 15px 20px;
+            border: none;
+            border-top: 1px solid #eee;
+        }
+
+        /* --- Footer Image Fix --- */
+        .footer-contact-right img {
+            width: 100%;
+            max-height: 220px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+  
+        @media (max-width: 768px) {
+            .navbar {
+                height: auto;
+                padding: 10px 15px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .navbar .logo {
+                flex: 1;
+            }
+            .nav-links {
+                display: none !important;
+            }
+            .nav-right-icons {
+                order: 2;
+                gap: 12px;
+            }
+            .nav-search {
+                order: 3;
+                width: 100% !important;
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+   
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>เมนูจัดการ</h3>
+            <button class="close-btn" id="close-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <ul class="sidebar-menu">
+           <li class="active"><a href="index.html"><i class="fa-solid fa-house"></i> หน้าแรก</a></li>
+            <li><a href="catalog.html"><i class="fa-solid fa-border-all"></i> สินค้าทั้งหมด</a></li>
+            <li><a href="profile.html"><i class="fa-solid fa-user"></i> โปรไฟล์ของฉัน</a></li>
+            <li><a href="my-products.html"><i class="fa-solid fa-box"></i> สินค้าของฉัน</a></li>
+             <li><a href="fix.html"><i class="fa-solid fa-pen-to-square"></i></i> แก้ไข้สินค้า</a></li>
+            <li><a href="account-settings.html"><i class="fa-solid fa-gear"></i> ตั้งค่าบัญชี</a></li>
+        </ul>
+        </ul>
+        <hr class="sidebar-divider">
+        <ul class="sidebar-menu">
+            <li><a href="index-regis.html" style="color: #dc3545;" onclick="localStorage.removeItem('userAccountSettings');"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</a></li>
+        </ul>
+    </aside>
+
+    <!-- Navbar ด้านบน -->
+    <header class="navbar">
+        <div class="logo">
+            <a href="index.html" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #004d34; font-weight: 700; font-size: 1.2rem;">
+                <img src="logo.png" alt="Logo" style="width: 35px; height: 35px; object-fit: cover; border-radius: 50%;"> 
+                Swap&go
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">หน้าแรก</a></li>
+            <li><a href="catalog.html">สินค้าทั้งหมด</a></li>
+        </ul>
+        <div class="nav-search">
+            <i class="fa-solid fa-magnifying-glass" style="color: #888; font-size: 0.85rem;"></i>
+            <input type="text" placeholder="ค้นหา...">
+        </div>
+        <div class="nav-right-icons">
+            <!-- ไอคอนโปรไฟล์บน Navbar ที่จะแปลงเป็นรูปภาพอัตโนมัติ -->
+            <a href="account-settings.html" class="nav-profile-link">
+                <div class="nav-profile-circle" id="nav-profile-container">
+                    <i class="fa-solid fa-user" id="nav-user-icon" style="font-size: 1rem; color: #555;"></i>
+                </div>
+            </a>
+
+      
+            <i class="fa-solid fa-bars" id="menu-toggle" style="cursor: pointer;" title="เปิด/ปิดเมนู"></i>
+        </div>
+    </header>
+
+
+    <div class="category-page-header">
+        <h1 class="category-page-title">หมวดหมู่สินค้าทั้งหมด</h1>
+        <p class="category-page-subtitle">เลือกหมวดหมู่สินค้ามือสองสำหรับนักศึกษาที่คุณต้องการค้นหา</p>
+    </div>
+
+    <!-- ส่วนรายการกล่องหมวดหมู่ -->
+    <main class="category-page-container">
+        <div class="category-page-grid">
+            <a href="catalog.html?category=หนังสือ" class="category-box-card" data-category="หนังสือ">
+                <div class="category-icon-wrapper">
+                    <i class="fa-solid fa-book"></i>
+                </div>
+                <div class="category-info">
+                    <h3 class="category-box-name">หนังสือ</h3>
+                    <span class="category-box-count">0 รายการ</span>
+                </div>
+            </a>
+
+            <a href="catalog.html?category=อุปกรณ์ไอที" class="category-box-card" data-category="อุปกรณ์ไอที">
+                <div class="category-icon-wrapper">
+                    <i class="fa-solid fa-laptop"></i>
+                </div>
+                <div class="category-info">
+                    <h3 class="category-box-name">อุปกรณ์ไอที</h3>
+                    <span class="category-box-count">0 รายการ</span>
+                </div>
+            </a>
+
+            <a href="catalog.html?category=เสื้อผ้า" class="category-box-card" data-category="เสื้อผ้า">
+                <div class="category-icon-wrapper">
+                    <i class="fa-solid fa-shirt"></i>
+                </div>
+                <div class="category-info">
+                    <h3 class="category-box-name">เสื้อผ้า</h3>
+                    <span class="category-box-count">0 รายการ</span>
+                </div>
+            </a>
+
+            <a href="catalog.html?category=อุปกรณ์การเรียน" class="category-box-card" data-category="อุปกรณ์การเรียน">
+                <div class="category-icon-wrapper">
+                    <i class="fa-solid fa-pen-ruler"></i>
+                </div>
+                <div class="category-info">
+                    <h3 class="category-box-name">อุปกรณ์การเรียน</h3>
+                    <span class="category-box-count">0 รายการ</span>
+                </div>
+            </a>
+
+            <a href="catalog.html?category=ของใช้ในหอ" class="category-box-card" data-category="ของใช้ในหอ">
+                <div class="category-icon-wrapper">
+                    <i class="fa-solid fa-bed"></i>
+                </div>
+                <div class="category-info">
+                    <h3 class="category-box-name">ของใช้ในหอ</h3>
+                    <span class="category-box-count">0 รายการ</span>
+                </div>
+            </a>
+
+            <a href="catalog.html?category=ของใช้ส่วนตัว" class="category-box-card" data-category="ของใช้ส่วนตัว">
+                <div class="category-icon-wrapper">
+                    <i class="fa-solid fa-user-tag"></i>
+                </div>
+                <div class="category-info">
+                    <h3 class="category-box-name">ของใช้ส่วนตัว</h3>
+                    <span class="category-box-count">0 รายการ</span>
+                </div>
+            </a>
+
+            <a href="catalog.html?category=อื่นๆ" class="category-box-card" data-category="อื่นๆ">
+                <div class="category-icon-wrapper">
+                    <i class="fa-solid fa-box-archive"></i>
+                </div>
+                <div class="category-info">
+                    <h3 class="category-box-name">อื่นๆ</h3>
+                    <span class="category-box-count">0 รายการ</span>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-contact-container">
+            <div class="footer-contact-left">
+                <div class="footer-logo">
+                    <a href="index.html" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #004d34; font-weight: 700; font-size: 1.1rem;">
+                        <img src="logo.png" alt="Logo" style="width: 30px; height: 30px; object-fit: cover; border-radius: 50%;"> 
+                        Swap&go
+                    </a>
+                </div>
+                <h3 class="footer-contact-title">ติดต่อเรา</h3>
+                <p class="footer-contact-desc">มีข้อสงสัย หรือต้องการสอบถามข้อมูลเพิ่มเติม สามารถติดต่อเราได้ผ่านช่องทางด้านล่างนี้</p>
+                
+                <ul class="footer-contact-info">
+                    <li><i class="fa-solid fa-envelope"></i> contact.swapandgo@gmail.com</li>
+                    <li><i class="fa-solid fa-location-dot"></i> มหาวิทยาลัยเทคโนโลยีราชมงคลตะวันออก วิทยาเขตบางพระ</li>
+                </ul>
+
+                <div class="footer-social-icons">
+                    <a href="https://line.me/ti/p/edEMCFLm-k" class="footer-social-icon social-line"><i class="fa-brands fa-line"></i></a>
+                    <a href="https://www.instagram.com/yoxurth?stkn=MTA5b3k5a3kzOGQ1NA==" class="footer-social-icon social-ig"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/share/1MLeNK6Gc1/?mibextid=wwXIfr" class="footer-social-icon social-fb"><i class="fa-brands fa-facebook-f"></i></a>
+                </div>
+            </div>
+            <div class="footer-contact-right">
+                <img src="river.jpg" alt="RMUTTO Building">
+            </div>
+        </div>
+        <div class="footer-bottom-bar">
+            <p>&copy; 2026 Swap&go. All rights reserved. RMUTTO Student Marketplace.</p>
+        </div>
+    </footer>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const savedData = JSON.parse(localStorage.getItem('userAccountSettings')) || {};
+            const navProfileContainer = document.getElementById('nav-profile-container');
+
+            if (navProfileContainer) {
+                if (savedData.avatarImage) {
+                    navProfileContainer.innerHTML = `<img src="${savedData.avatarImage}" alt="Profile">`;
+                } else {
+                    navProfileContainer.innerHTML = `<i class="fa-solid fa-user" id="nav-user-icon" style="font-size: 1rem; color: #555;"></i>`;
+                }
+            }
+
+      
+            updateCategoryCountsFromLocalStorage();
+        });
+
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const closeBtn = document.getElementById('close-btn');
+
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.add('active');
+                sidebarOverlay.classList.add('active');
+            });
+        }
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeSidebar);
+        }
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', closeSidebar);
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        }
+
+        function updateCategoryCountsFromLocalStorage() {
+            const products = JSON.parse(localStorage.getItem('allProducts')) || [];
+            const counts = {
+                'หนังสือ': 0,
+                'อุปกรณ์ไอที': 0,
+                'เสื้อผ้า': 0,
+                'อุปกรณ์การเรียน': 0,
+                'ของใช้ในหอ': 0,
+                'ของใช้ส่วนตัว': 0,
+                'อื่นๆ': 0
+            };
+
+            products.forEach(product => {
+                let cat = (product.category || product.cat || product.type || '').toLowerCase().trim();
+                
+                if (cat.includes('หนังสือ') || cat.includes('book')) {
+                    counts['หนังสือ']++;
+                } else if (cat.includes('ไอที') || cat.includes('it') || cat.includes('คอม') || cat.includes('laptop')) {
+                    counts['อุปกรณ์ไอที']++;
+                } else if (cat.includes('เสื้อ') || cat.includes('ผ้า') || cat.includes('cloth')) {
+                    counts['เสื้อผ้า']++;
+                } else if (cat.includes('เรียน') || cat.includes('study') || cat.includes('อุปกรณ์การเรียน')) {
+                    counts['อุปกรณ์การเรียน']++;
+                } else if (cat.includes('หอ') || cat.includes('dorm') || cat.includes('เตียง')) {
+                    counts['ของใช้ในหอ']++;
+                } else if (cat.includes('ส่วนตัว') || cat.includes('personal')) {
+                    counts['ของใช้ส่วนตัว']++;
+                } else {
+                    counts['อื่นๆ']++;
+                }
+            });
+
+            const categoryCards = document.querySelectorAll('.category-box-card');
+            categoryCards.forEach(card => {
+                const categoryName = card.getAttribute('data-category');
+                const countSpan = card.querySelector('.category-box-count');
+
+                if (categoryName && countSpan) {
+                    const total = counts[categoryName] || 0;
+                    countSpan.textContent = `${total} รายการ`;
+                }
+            });
+        }
+    </script>
+</body>
+</html>

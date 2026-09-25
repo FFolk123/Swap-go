@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โปรไฟล์ - Swap&go</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+        body { background-color: #f4f6f8; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
+        .navbar { background: #fff; height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+        .navbar .logo { font-size: 1.2rem; font-weight: 600; color: #004d34; display: flex; align-items: center; gap: 8px; text-decoration: none; }
+        .navbar .logo img { width: 35px; height: 35px; object-fit: cover; border-radius: 50%; }
+        .nav-links { display: flex; list-style: none; gap: 30px; }
+        .nav-links a { text-decoration: none; color: #555; font-size: 0.95rem; }
+        .nav-links a:hover { color: #004d34; font-weight: 500; }
+        .nav-search { position: relative; background: #eef2f3; border-radius: 20px; padding: 5px 15px; display: flex; align-items: center; gap: 10px; width: 250px; }
+        .nav-search input { border: none; background: transparent; outline: none; width: 100%; font-size: 0.9rem; }
+        .nav-right-icons { display: flex; gap: 20px; align-items: center; font-size: 1.2rem; }
+        .nav-right-icons a, .nav-right-icons i { color: #333; text-decoration: none; position: relative; cursor: pointer; }
+        .nav-profile-link { color: inherit; text-decoration: none; display: flex; align-items: center; }
+        .nav-profile-circle { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #ddd; border: 1px solid #ccc; }
+        .nav-profile-circle img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); visibility: hidden; opacity: 0; transition: opacity 0.3s ease; z-index: 998; }
+        .sidebar-overlay.active { visibility: visible; opacity: 1; }
+        .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: #fff; box-shadow: 4px 0 15px rgba(0,0,0,0.1); padding: 20px 0; transition: left 0.3s ease; z-index: 999; overflow-y: auto; }
+        .sidebar.active { left: 0; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; padding: 0 20px 15px 20px; border-bottom: 1px solid #eee; margin-bottom: 15px; }
+        .sidebar-header h3 { font-size: 1.1rem; color: #004d34; margin: 0; }
+        .close-btn { background: none; border: none; font-size: 1.2rem; color: #666; cursor: pointer; }
+        .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+        .sidebar-menu li a { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: #555; text-decoration: none; font-size: 0.92rem; transition: 0.2s; }
+        .sidebar-menu li.active a, .sidebar-menu li a:hover { background: #e6f4ea; color: #004d34; font-weight: 500; border-left: 4px solid #004d34; }
+        .sidebar-divider { margin: 15px 20px; border: none; border-top: 1px solid #eee; }
+
+        .main-container { flex: 1; max-width: 950px; width: 100%; margin: 40px auto; padding: 0 20px; }
+        .profile-content { background: #fff; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); padding: 45px 50px; }
+        .profile-header { display: flex; align-items: center; gap: 30px; padding-bottom: 30px; border-bottom: 1px solid #eee; }
+        .profile-avatar { width: 120px; height: 120px; border-radius: 50%; background: #e9ecef; display: flex; align-items: center; justify-content: center; font-size: 3.8rem; color: #adb5bd; overflow: hidden; border: 3px solid #004d34; flex-shrink: 0; }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-info h2 { font-size: 1.5rem; font-weight: 600; color: #222; margin-bottom: 6px; }
+        .profile-info p { font-size: 1rem; color: #666; line-height: 1.6; margin-bottom: 15px; }
+        .btn-edit { background: #fff; border: 1px solid #a8c5b3; color: #004d34; padding: 7px 22px; border-radius: 20px; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-block; }
+        .btn-edit:hover { background: #004d34; color: #fff; border-color: #004d34; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>เมนูจัดการ</h3>
+            <button class="close-btn" id="close-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="index.html"><i class="fa-solid fa-house"></i> หน้าแรก</a></li>
+            <li><a href="catalog.html"><i class="fa-solid fa-border-all"></i> สินค้าทั้งหมด</a></li>
+            <li class="active"><a href="profile.html"><i class="fa-solid fa-user"></i> โปรไฟล์ของฉัน</a></li>
+            <li><a href="my-products.html"><i class="fa-solid fa-box"></i> สินค้าของฉัน</a></li>
+             <li><a href="fix.html"><i class="fa-solid fa-pen-to-square"></i></i> แก้ไข้สินค้า</a></li>
+            <li><a href="account-settings.html"><i class="fa-solid fa-gear"></i> ตั้งค่าบัญชี</a></li>
+        </ul>
+        <hr class="sidebar-divider">
+        <ul class="sidebar-menu">
+            <li><a href="index-regis.html" style="color: #dc3545;"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</a></li>
+        </ul>
+    </aside>
+
+    <header class="navbar">
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="Logo"> Swap&go
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html">หน้าแรก</a></li>
+            <li><a href="catalog.html">สินค้าทั้งหมด</a></li>
+        </ul>
+        <div class="nav-search">
+            <i class="fa-solid fa-magnifying-glass" style="color: #888; font-size: 0.85rem;"></i>
+            <input type="text" placeholder="ค้นหา...">
+        </div>
+        <div class="nav-right-icons">
+            <a href="account-settings.html" class="nav-profile-link">
+                <div class="nav-profile-circle" id="nav-profile-container">
+                    <i class="fa-solid fa-user" id="nav-user-icon" style="font-size: 1rem; color: #555;"></i>
+                </div>
+            </a>
+            <i class="fa-solid fa-bars" id="menu-toggle" title="เปิด/ปิดเมนู"></i>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <main class="profile-content">
+            <div class="profile-header">
+                <div class="profile-avatar" id="profile-avatar-container">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="profile-info">
+                    <h2 id="profile-name">กำลังโหลด...</h2>
+                    <p id="profile-details">รหัสนักศึกษา -<br>คณะ -</p>
+                    <a href="account-settings.html" class="btn-edit">แก้ไขโปรไฟล์</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="site-footer" style="margin-top: 50px;">
+        <div class="footer-contact-container">
+            <div class="footer-contact-left">
+                <div class="logo" style="margin-bottom: 12px;">
+                    <a href="index.html"></a>
+                    <img src="logo.png"> Swap&go
+                </div>
+                <h3 class="footer-contact-title">ติดต่อเรา</h3>
+                <p class="footer-contact-desc">มีข้อสงสัย หรือต้องการสอบถามข้อมูลเพิ่มเติม สามารถติดต่อเราได้ผ่านช่องทางด้านล่างนี้</p>
+                <ul class="footer-contact-info">
+                    <li><i class="fa-solid fa-envelope"></i> contact.swapandgo@gmail.com</li>
+                    <li><i class="fa-solid fa-location-dot"></i> มหาวิทยาลัยเทคโนโลยีราชมงคลตะวันออก วิทยาเขตบางพระ</li>
+                </ul>
+            </div>
+            <div class="footer-contact-right">
+                <img src="river.jpg" alt="RMUTTO Building">
+            </div>
+        </div>
+        <div class="footer-bottom-bar">
+            <p>&copy; 2026 Swap&go. All rights reserved. RMUTTO Student Marketplace.</p>
+        </div>
+    </footer>
+
+    <script>
+        // ==========================================
+        // 🔧 CONFIG FOR BACKEND TEAM
+        // ==========================================
+        const CONFIG = {
+            USE_API: false, // เปลี่ยนเป็น true เมื่อพร้อมต่อ API จริง
+            API_GET_USER: '/api/user/profile'
+        };
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const navProfileContainer = document.getElementById('nav-profile-container');
+            const profileAvatarContainer = document.getElementById('profile-avatar-container');
+            const profileName = document.getElementById('profile-name');
+            const profileDetails = document.getElementById('profile-details');
+
+            let savedData = {};
+
+            if (CONFIG.USE_API) {
+                // 🟢 [Backend Integration Point] ดึงข้อมูลจาก API
+                try {
+                    const response = await fetch(CONFIG.API_GET_USER);
+                    if (response.ok) savedData = await response.json();
+                } catch (err) {
+                    console.error('Failed to fetch user data:', err);
+                }
+            } else {
+                // 🟡 Mockup Data จาก LocalStorage
+                savedData = JSON.parse(localStorage.getItem('userAccountSettings')) || {
+                    fullname: "นทรา มณีแสง",
+                    studentId: "0169040664007-1",
+                    faculty: "วท.",
+                    phone: "-",
+                    year: "-",
+                    avatarImage: ""
+                };
+            }
+
+            // แสดงผลรูปภาพ
+            if (savedData.avatarImage) {
+                if (navProfileContainer) navProfileContainer.innerHTML = `<img src="${savedData.avatarImage}" alt="Profile">`;
+                if (profileAvatarContainer) profileAvatarContainer.innerHTML = `<img src="${savedData.avatarImage}" alt="Profile">`;
+            } else {
+                if (navProfileContainer) navProfileContainer.innerHTML = `<i class="fa-solid fa-user" style="font-size: 1rem; color: #555;"></i>`;
+                if (profileAvatarContainer) profileAvatarContainer.innerHTML = `<i class="fa-solid fa-user"></i>`;
+            }
+
+            // แสดงผลชื่อ
+            if (profileName) {
+                profileName.textContent = savedData.fullname || savedData.name || "ยังไม่ได้ตั้งชื่อ";
+            }
+
+            // แสดงผลรายละเอียด
+            if (profileDetails) {
+                profileDetails.innerHTML = `รหัสนักศึกษา ${savedData.studentId || '-'}<br>` +
+                                           `คณะ: ${savedData.faculty || '-'}<br>` +
+                                           `ชั้นปี: ${savedData.year || '-'}<br>` +
+                                           `เบอร์โทรศัพท์: ${savedData.phone || '-'}`;
+            }
+        });
+
+        // ควบคุม Sidebar
+        const menuToggle = document.getElementById('menu-toggle');
+        const closeBtn = document.getElementById('close-btn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+        if (menuToggle && sidebar && sidebarOverlay && closeBtn) {
+            menuToggle.addEventListener('click', () => { sidebar.classList.add('active'); sidebarOverlay.classList.add('active'); });
+            closeBtn.addEventListener('click', closeSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
+            function closeSidebar() { sidebar.classList.remove('active'); sidebarOverlay.classList.remove('active'); }
+        }
+    </script>
+</body>
+</html>

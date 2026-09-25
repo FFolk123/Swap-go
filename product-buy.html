@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายละเอียดสินค้า - Swap&go</title>
+    <!-- Google Fonts: Kanit -->
+      <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+  
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        /* --- Navbar Styles --- */
+        .navbar {
+            background: #fff;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .logo span {
+            color: #004d34;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #475569;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: #004d34;
+            font-weight: 500;
+        }
+
+        .nav-search {
+            background: #f1f5f9;
+            padding: 6px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 250px;
+        }
+
+        .nav-search input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .nav-right-icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+
+        .nav-right-icons a,
+        .nav-right-icons i {
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+            position: relative;
+        }
+
+        /* --- Navbar Profile Icon & Image Style --- */
+        .nav-profile-link {
+            color: inherit;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-profile-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #ddd;
+            border: 1px solid #ccc;
+        }
+
+        .nav-profile-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* --- Sidebar Styles --- */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 998;
+        }
+
+        .sidebar-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 260px;
+            height: 100%;
+            background: #fff;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            padding: 20px 0;
+            transition: left 0.3s ease;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px 15px 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.1rem;
+            color: #004d34;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #555;
+            text-decoration: none;
+            font-size: 0.92rem;
+            transition: 0.2s;
+        }
+
+        .sidebar-menu li.active a,
+        .sidebar-menu li a:hover {
+            background: #e6f4ea;
+            color: #004d34;
+            font-weight: 500;
+            border-left: 4px solid #004d34;
+        }
+
+        .sidebar-divider {
+            margin: 15px 20px;
+            border: none;
+            border-top: 1px solid #eee;
+        }
+
+        /* --- Breadcrumb Styles --- */
+        .breadcrumb {
+            max-width: 1000px;
+            margin: 20px auto 0;
+            padding: 0 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .breadcrumb a {
+            color: #004d34;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+ 
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>เมนูจัดการ</h3>
+            <button class="close-btn" id="close-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="active"><a href="index.html"><i class="fa-solid fa-house"></i> หน้าแรก</a></li>
+            <li><a href="catalog.html"><i class="fa-solid fa-border-all"></i> สินค้าทั้งหมด</a></li>
+            <li><a href="profile.html"><i class="fa-solid fa-user"></i> โปรไฟล์ของฉัน</a></li>
+            <li><a href="my-products.html"><i class="fa-solid fa-box"></i> สินค้าของฉัน</a></li>
+             <li><a href="fix.html"><i class="fa-solid fa-pen-to-square"></i></i> แก้ไข้สินค้า</a></li>
+            <li><a href="account-settings.html"><i class="fa-solid fa-gear"></i> ตั้งค่าบัญชี</a></li>
+        </ul>
+        </ul>
+        <hr class="sidebar-divider">
+        <ul class="sidebar-menu">
+            <li><a href="index-regis.html" style="color: #dc3545;"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</a></li>
+        </ul>
+    </aside>
+
+  
+    <header class="navbar">
+       <div class="logo">
+            <a href="index.html"></a>
+            <img src="logo.png"> Swap&go
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">หน้าแรก</a></li>
+            <li><a href="catalog.html">สินค้าทั้งหมด</a></li>
+        </ul>
+        <div class="nav-search">
+            <i class="fa-solid fa-magnifying-glass" style="color: #64748b;"></i>
+            <input type="text" id="product-search" placeholder="ค้นหา...">
+        </div>
+        <div class="nav-right-icons">
+                <span id="cart-count" class="cart-badge" style="display: none; position: absolute; top: -5px; right: -8px; background: #ff4757; color: white; font-size: 0.6rem; padding: 1px 6px; border-radius: 50%; font-weight: 500;">0</span>
+            </a>
+            
+            <!-- ไอคอนโปรไฟล์บน Navbar (ซิงค์อัตโนมัติ) -->
+            <a href="account-settings.html" class="nav-profile-link">
+                <div class="nav-profile-circle" id="nav-profile-container">
+                    <i class="fa-solid fa-user" id="nav-user-icon" style="font-size: 1rem; color: #555;"></i>
+                </div>
+            </a>
+
+            <!-- ปุ่มเปิด Sidebar -->
+            <i class="fa-solid fa-bars" id="menu-toggle" title="เปิด/ปิดเมนู"></i>
+        </div>
+    </header>
+
+    <div class="breadcrumb">
+        <a href="category.html">หมวดหมู่</a> &gt; <a href="catalog.html" id="breadcrumb-category">สินค้า</a> &gt; <span id="breadcrumb-name">รายละเอียดสินค้า</span>
+    </div>
+
+   
+    <main class="product-detail-container">
+        <div class="product-gallery">
+            <div class="main-product-img">
+                <img id="product-img" src="" alt="รูปสินค้า">
+            </div>
+        
+            <div class="thumbnail-list" id="thumbnail-list"></div>
+        </div>
+        
+        <div class="product-info-section">
+            <div class="product-title-row">
+                <h1 id="product-name" class="product-main-title">กำลังโหลด...</h1>
+            </div>
+            
+            <div id="product-price" class="product-main-price">฿0</div>
+            
+            <div class="product-meta-list" style="margin-top: 5px;">
+                <p class="product-meta-text" id="product-category">หมวดหมู่: -</p>
+                <p class="product-meta-text" id="product-date">ลงขายเมื่อ: -</p>
+                <p class="product-meta-text" id="product-updated">แก้ไขล่าสุด: -</p>
+                <p class="product-meta-text" id="product-status">สถานะ: มีสินค้า</p>
+            </div>
+       <div class="product-description-block" style="margin-top: 15px;">
+                <h3 class="desc-title">รายละเอียดสินค้า</h3>
+                <p class="desc-text" id="product-desc">-</p>
+            </div>
+        </div>
+        <div class="product-contact-panel" style="padding: 20px; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff;">
+            <h3>ข้อมูลผู้ขาย</h3>
+            <p id="product-address" style="margin-top: 10px;">ที่อยู่: -</p>
+            <p id="product-contact" style="margin-top: 8px; white-space: pre-line;">ช่องทางติดต่อ: -</p>
+        </div>
+        <div> </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-contact-container">
+            <div class="footer-contact-left">
+                <div class="logo">
+            <a href="index.html"></a>
+            <img src="logo.png"> Swap&go
+        </div>
+                <h3 class="footer-contact-title">ติดต่อเรา</h3>
+                <p class="footer-contact-desc">มีข้อสงสัย หรือต้องการสอบถามข้อมูลเพิ่มเติม สามารถติดต่อเราได้ผ่านช่องทางด้านล่างนี้</p>
+                
+                <ul class="footer-contact-info">
+                    <li><i class="fa-solid fa-envelope"></i> contact.swapandgo@gmail.com</li>
+                    <li><i class="fa-solid fa-location-dot"></i> มหาวิทยาลัยเทคโนโลยีราชมงคลตะวันออก วิทยาเขตบางพระ</li>
+                </ul>
+
+                <div class="footer-social-icons">
+                    <a href="https://line.me/ti/p/edEMCFLm-k" class="footer-social-icon social-line"><i class="fa-brands fa-line"></i></a>
+                    <a href="https://www.instagram.com/yoxurth?stkn=MTA5b3k5a3kzOGQ1NA==" class="footer-social-icon social-ig"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/share/1MLeNK6Gc1/?mibextid=wwXIfr" class="footer-social-icon social-fb"><i class="fa-brands fa-facebook-f"></i></a>
+                </div>
+            </div>
+            <div class="footer-contact-right">
+                <img src="river.jpg" alt="RMUTTO Building">
+            </div>
+        </div>
+        <div class="footer-bottom-bar">
+            <p>&copy; 2026 Swap&go. All rights reserved. RMUTTO Student Marketplace.</p>
+        </div>
+    </footer>
+
+    <script>
+       
+       document.addEventListener('DOMContentLoaded', () => {
+            // 1. โหลดรูปโปรไฟล์มาแสดงที่ Navbar อัตโนมัติ (รองรับทั้งอัปโหลดและ Google Login)
+            const savedData = JSON.parse(localStorage.getItem('userAccountSettings')) || {};
+            const navProfileContainer = document.getElementById('nav-profile-container');
+
+            if (navProfileContainer) {
+                if (savedData.avatarImage) {
+                    navProfileContainer.innerHTML = `<img src="${savedData.avatarImage}" alt="Profile">`;
+                } else {
+                    navProfileContainer.innerHTML = `<i class="fa-solid fa-user" id="nav-user-icon" style="font-size: 1rem; color: #555;"></i>`;
+                }
+            }
+
+            updateCartBadge();
+
+          
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+
+            const allProducts = JSON.parse(localStorage.getItem('allProducts')) || [];
+            let product = allProducts.find(p => String(p.id) === String(productId));
+
+            if (!product) {
+                product = {
+                    name: "หนังสือเรียนคอมพิวเตอร์กราฟิก มือสองสภาพดี",
+                    price: 180,
+                    category: "หนังสือ",
+                    date: "12 สิงหาคม 2569",
+                    description: "หนังสือเรียนคอมพิวเตอร์กราฟิก ฉบับสมบูรณ์ สภาพดี ไม่มีรอยขีดเขียนด้านใน เหมาะสำหรับนักศึกษาใช้งานเรียนต่อได้เลย",
+                    image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=600",
+                    images: [
+                        "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=600",
+                        "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=600",
+                        "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=600"
+                    ]
+                };
+            }
+
+            // นำข้อมูลจริงมาแสดงผลบนหน้า HTML
+            document.getElementById('product-name').textContent = product.name;
+            document.getElementById('product-price').textContent = `฿${Number(product.price).toLocaleString()}`;
+            const categoryLabels = {
+                book: 'หนังสือ',
+                equipment: 'อุปกรณ์การเรียน',
+                electronics: 'ไอที / อิเล็กทรอนิกส์',
+                other: 'อื่นๆ'
+            };
+            const categoryLabel = categoryLabels[product.category] || product.category || 'ทั่วไป';
+            const createdDate = product.createdAt || product.date;
+            const updatedDate = product.updatedAt;
+            document.getElementById('product-category').textContent = `หมวดหมู่: ${categoryLabel}`;
+            document.getElementById('product-date').textContent = `ลงขายเมื่อ: ${formatProductDate(createdDate)}`;
+            document.getElementById('product-updated').textContent = updatedDate
+                ? `แก้ไขล่าสุด: ${formatProductDate(updatedDate)}`
+                : 'แก้ไขล่าสุด: ยังไม่มีการแก้ไข';
+            document.getElementById('product-address').textContent = `ที่อยู่: ${product.address || 'ไม่ระบุ'}`;
+            document.getElementById('product-contact').textContent = `ช่องทางติดต่อ: ${product.contact || 'ไม่ระบุ'}`;
+            document.getElementById('product-desc').textContent = product.description;
+            document.getElementById('breadcrumb-name').textContent = product.name;
+
+          
+            const mainImg = document.getElementById('product-img');
+            const thumbList = document.getElementById('thumbnail-list');
+            
+            let imagesList = product.images && product.images.length > 0 ? product.images : [product.image];
+            mainImg.src = imagesList[0];
+
+            thumbList.innerHTML = '';
+            imagesList.forEach((imgSrc, index) => {
+                const thumbItem = document.createElement('div');
+                thumbItem.className = `thumb-item ${index === 0 ? 'active' : ''}`;
+                thumbItem.innerHTML = `<img src="${imgSrc}" alt="thumb-${index + 1}">`;
+
+                thumbItem.addEventListener('click', function() {
+                    document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    mainImg.src = imgSrc;
+                });
+
+                thumbList.appendChild(thumbItem);
+            });
+
+            const addCartBtn = document.getElementById('btn-add-cart');
+            const buyNowBtn = document.getElementById('btn-buy-now');
+
+            if (addCartBtn) {
+                addCartBtn.addEventListener('click', () => {
+                    let cart = JSON.parse(localStorage.getItem('cartItems')) || [];
+                    const existingIndex = cart.findIndex(item => item.name === product.name);
+
+                    if (existingIndex > -1) {
+                        cart[existingIndex].quantity += 1;
+                    } else {
+                        cart.push({
+                            name: product.name,
+                            price: product.price,
+                            image: imagesList[0],
+                            quantity: 1
+                        });
+                    }
+
+                    localStorage.setItem('cartItems', JSON.stringify(cart));
+                    updateCartBadge();
+                    alert('เพิ่มสินค้าลงในตะกร้าเรียบร้อยแล้ว!');
+                });
+            }
+
+            if (buyNowBtn) {
+                buyNowBtn.addEventListener('click', () => {
+                    const buyItem = [{
+                        name: product.name,
+                        price: product.price,
+                        image: imagesList[0],
+                        quantity: 1
+                    }];
+
+                    localStorage.setItem('checkoutItems', JSON.stringify(buyItem));
+                    window.location.href = 'checkout.html';
+                });
+            }
+        });
+
+        function formatProductDate(value) {
+            if (!value) return 'วันนี้';
+            const parsedDate = new Date(value);
+            return Number.isNaN(parsedDate.getTime())
+                ? value
+                : parsedDate.toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+        }
+
+
+        const menuToggle = document.getElementById('menu-toggle');
+        const closeBtn = document.getElementById('close-btn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+        if (menuToggle && sidebar && sidebarOverlay && closeBtn) {
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.add('active');
+                sidebarOverlay.classList.add('active');
+            });
+
+            closeBtn.addEventListener('click', closeSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
+
+            function closeSidebar() {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            }
+        }
+
+        function updateCartBadge() {
+            const cart = JSON.parse(localStorage.getItem('cartItems')) || [];
+            let totalCount = 0;
+            cart.forEach(item => {
+                totalCount += (item.quantity || 1);
+            });
+
+            const badge = document.getElementById('cart-count');
+            if (badge) {
+                if (totalCount > 0) {
+                    badge.textContent = totalCount;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

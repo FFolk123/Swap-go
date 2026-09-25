@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>สมัครสมาชิก - Swap&go</title>
+  <link href="https://fonts.googleapis.com/css?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="register-body">
+
+  <div class="register-container">
+     <div class="register-left" style="background: url('river.jpg') center/cover no-repeat;">
+      <div class="overlay-card">
+        <h2>ร่วมเป็นส่วนหนึ่ง ของ StudentMarket</h2>
+        <p>ยืนยันตัวตนด้วยอีเมลมหาวิทยาลัยเพื่อสร้างพื้นที่ซื้อขายที่ปลอดภัยสำหรับนักศึกษา</p>
+      </div>
+    </div>
+
+    <div class="register-right">
+      <div class="form-header">
+        <h2>สมัครสมาชิก</h2>
+      </div>
+
+      <form>
+        <div class="form-group">
+          <label>ชื่อ - นามสกุล <span class="required">*</span></label>
+          <input type="text" class="form-control" placeholder="" required>
+        </div>
+
+        <div class="form-group">
+          <label>รหัสนักศึกษา <span class="required">*</span></label>
+          <input type="text" class="form-control" placeholder="ระบุรหัสนักศึกษา" required>
+        </div>
+
+        <div class="form-group">
+          <label>อีเมลมหาวิทยาลัย <span class="required">*</span></label>
+          <input type="email" class="form-control" placeholder="@rmutto.ac.th" required>
+        </div>
+
+        <div class="form-group">
+          <label>เบอร์โทรศัพท์ <span class="required">*</span></label>
+          <input type="tel" class="form-control" placeholder="ระบุเบอร์โทร" required>
+        </div>
+
+        <div class="form-group">
+          <label>รหัสผ่าน <span class="required">*</span></label>
+          <div class="password-wrapper">
+            <input type="password" class="form-control" id="password" required>
+            <i class="fa-regular fa-eye toggle-password" id="togglePassword"></i>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>ยืนยันรหัสผ่าน <span class="required">*</span></label>
+          <div class="password-wrapper">
+            <input type="password" class="form-control" id="confirmPassword" required>
+            <i class="fa-regular fa-eye toggle-password" id="toggleConfirmPassword"></i>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit">เข้าสู่ระบบ</button>
+
+        <div class="auth-divider">
+          <span>หรือ</span>
+        </div>
+
+        <!-- ปุ่มเข้าสู่ระบบด้วย Google -->
+        <button type="button" class="btn-google" id="google-login-btn">
+          <i class="fa-brands fa-google"></i> ดำเนินการต่อด้วย Google
+        </button>
+
+        <div class="form-footer">
+          <p>มีบัญชีอยู่แล้ว? <a href="login.html">เข้าสู่ระบบ</a></p>
+        </div>
+      </form>
+    </div>
+  </div>  
+
+   <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    
+   const firebaseConfig = {
+  apiKey: "AIzaSyCWXQEVSI4lBR0zTlvJwbGHRLvuA40AfoE",
+  authDomain: "swapandgo-rmtto.firebaseapp.com",
+  projectId: "swapandgo-rmtto",
+  storageBucket: "swapandgo-rmtto.firebasestorage.app",
+  messagingSenderId: "163303409596",
+  appId: "1:163303409596:web:4871f953eff2fbecd28db9",
+  measurementId: "G-HQ8L78LSRH"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    document.getElementById("google-login-btn").addEventListener("click", () => {
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                const user = result.user;
+                localStorage.setItem('userAccountSettings', JSON.stringify({
+                  fullname: user.displayName || '',
+                  email: user.email || '',
+                  avatarImage: user.photoURL || '',
+                  uid: user.uid
+                }));
+                localStorage.setItem('currentUser', JSON.stringify({
+                  uid: user.uid,
+                  email: user.email || '',
+                  name: user.displayName || ''
+                }));
+                alert("เข้าสู่ระบบสำเร็จ: " + user.displayName);
+                console.log(user);
+                window.location.href = "indexmem.html"; // เปลี่ยนหน้าไปหน้าหลัก
+            })
+            .catch((error) => {
+                console.error(error.code, error.message);
+                alert("เกิดข้อผิดพลาด: " + error.message);
+            });
+    });
+
+    // Script สำหรับเปิด-ปิดดูรหัสผ่าน
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+
+    togglePassword.addEventListener('click', function () {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      this.classList.toggle('fa-eye-slash');
+    });
+  </script>
+</body>
+</html>
