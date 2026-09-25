@@ -275,10 +275,10 @@ body {
 .search-suggestion-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   width: 100%;
-  min-height: 48px;
-  padding: 6px 9px;
+  min-height: 36px;
+  padding: 4px 8px;
   border: 0;
   border-bottom: 1px solid #f1f5f9;
   background: #fff;
@@ -299,10 +299,10 @@ body {
 }
 
 .search-suggestion-item img {
-  width: 32px;
-  height: 32px;
-  flex: 0 0 32px;
-  border-radius: 5px;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  border-radius: 4px;
   object-fit: cover;
 }
 
