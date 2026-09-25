@@ -251,6 +251,16 @@ body {
     transition: all 0.3s ease;
 }
 
+.nav-search,
+.homepage-search {
+  display: none !important;
+}
+
+.catalog-page .nav-search {
+  position: relative;
+  display: flex !important;
+}
+
 .search-suggestions {
   position: absolute;
   top: calc(100% + 8px);

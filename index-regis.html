@@ -264,20 +264,6 @@
                 ของดี มีคุณค่า ส่งต่อได้เสมอ
             </p>
 
-            <div class="hero-search-box">
-
-                <input
-                    type="text"
-                    id="home-search"
-                    placeholder="ค้นหาสินค้า..."
-                >
-
-                <button id="home-search-button" type="button" aria-label="ค้นหาสินค้า">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
-                <div id="home-search-suggestions" class="search-suggestions" hidden></div>
-
-            </div>
 
         </div>
 
@@ -532,48 +518,6 @@
     <script>
 
         document.addEventListener("DOMContentLoaded", () => {
-
-            const homeSearch = document.getElementById('home-search');
-            const homeSearchButton = document.getElementById('home-search-button');
-            const goToCatalogSearch = () => {
-                const searchTerm = homeSearch.value.trim();
-                window.location.href = `catalog-regis.html${searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : ''}`;
-            };
-            homeSearchButton.addEventListener('click', goToCatalogSearch);
-            homeSearch.addEventListener('keydown', event => {
-                if (event.key === 'Enter') goToCatalogSearch();
-            });
-
-            const suggestionBox = document.getElementById('home-search-suggestions');
-            const renderSuggestions = () => {
-                const searchTerm = homeSearch.value.trim().toLocaleLowerCase();
-                suggestionBox.replaceChildren();
-                if (!searchTerm) {
-                    suggestionBox.hidden = true;
-                    return;
-                }
-
-                const products = (JSON.parse(localStorage.getItem('allProducts')) || [])
-                    .filter(product => (product.name || '').toLocaleLowerCase().includes(searchTerm))
-                    .slice(0, 6);
-
-                products.forEach(product => {
-                    const suggestion = document.createElement('button');
-                    suggestion.type = 'button';
-                    suggestion.className = 'search-suggestion-item';
-                    suggestion.innerHTML = `<img src="${product.image || product.image_url || 'logo.png'}" alt=""><span class="search-suggestion-name"></span>`;
-                    suggestion.querySelector('.search-suggestion-name').textContent = product.name;
-                    suggestion.addEventListener('click', () => {
-                        window.location.href = `product-regis.html?id=${encodeURIComponent(product.id)}`;
-                    });
-                    suggestionBox.appendChild(suggestion);
-                });
-                suggestionBox.hidden = products.length === 0;
-            };
-            homeSearch.addEventListener('input', renderSuggestions);
-            document.addEventListener('click', event => {
-                if (!event.target.closest('.hero-search-box')) suggestionBox.hidden = true;
-            });
 
             loadLatestProducts();
 

@@ -629,7 +629,7 @@
         }
     </style>
 </head>
-<body>
+<body class="catalog-page">
 
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <aside class="sidebar" id="sidebar">
@@ -665,6 +665,7 @@
         <div class="nav-search">
             <i class="fa-solid fa-magnifying-glass" style="color: #888;"></i>
             <input type="text" id="catalog-search" placeholder="ค้นหาชื่อสินค้า...">
+            <div id="catalog-search-suggestions" class="search-suggestions" hidden></div>
         </div>
         <div class="nav-right-icons">
         
@@ -786,8 +787,32 @@
             }
 
             const searchInput = document.getElementById('catalog-search');
+            const suggestionBox = document.getElementById('catalog-search-suggestions');
             if (searchInput) {
-                searchInput.addEventListener('input', filterAndRenderProducts);
+                searchInput.addEventListener('input', () => {
+                    const searchTerm = searchInput.value.trim().toLocaleLowerCase();
+                    suggestionBox.replaceChildren();
+                    const products = searchTerm
+                        ? (JSON.parse(localStorage.getItem('allProducts')) || [])
+                            .filter(product => (product.name || '').toLocaleLowerCase().includes(searchTerm))
+                            .slice(0, 8)
+                        : [];
+
+                    products.forEach(product => {
+                        const suggestion = document.createElement('button');
+                        suggestion.type = 'button';
+                        suggestion.className = 'search-suggestion-item';
+                        suggestion.textContent = product.name;
+                        suggestion.addEventListener('click', () => {
+                            searchInput.value = product.name;
+                            suggestionBox.hidden = true;
+                            filterAndRenderProducts();
+                        });
+                        suggestionBox.appendChild(suggestion);
+                    });
+                    suggestionBox.hidden = products.length === 0;
+                    filterAndRenderProducts();
+                });
             }
         });
 
