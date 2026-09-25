@@ -308,7 +308,7 @@ body {
 
 .search-suggestion-name {
   overflow: hidden;
-  font-size: 0.78rem;
+  font-size: 10px;
   font-weight: 400;
   text-overflow: ellipsis;
   white-space: nowrap;
